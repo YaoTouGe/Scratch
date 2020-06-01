@@ -4,13 +4,13 @@
 
 namespace My
 {
-    Interface IApplication: implements IRuntimeModule
+    Interface IApplication : implements IRuntimeModule
     {
     public:
-        virtual int Initialize() = 0 override;
-        virtual void Finalize() = 0 override;
-        virtual void Tick() = 0 override;
+        virtual int Initialize() override = 0;
+        virtual void Finalize() override = 0;
+        virtual void Tick() override = 0;
 
         virtual bool IsQuit() = 0;
-    }
-}
+    };
+}; // namespace My

@@ -4,7 +4,7 @@
 
 namespace My
 {
-    class BaseApplication: implements IApplication
+    class BaseApplication : implements IApplication
     {
     public:
         virtual int Initialize() override;
@@ -15,7 +15,5 @@ namespace My
 
     protected:
         bool m_bQuit;
-    }
-
-    extern BaseApplication* g_app;
-}
+    };
+} // namespace My

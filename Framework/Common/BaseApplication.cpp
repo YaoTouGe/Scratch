@@ -7,12 +7,12 @@ namespace My
         m_bQuit = false;
         return 0;
     }
-    void Finalize()
+    void BaseApplication::Finalize()
     {
         
     }
 
-    void Tick()
+    void BaseApplication::Tick()
     {
         
     }
