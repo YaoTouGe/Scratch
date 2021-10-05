@@ -105,7 +105,7 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam,
     {
     case WM_CREATE:
         D2D1_FACTORY_OPTIONS option;
-        option.debugLevel = D2D1_DEBUG_LEVEL_INFORMATION;
+        option.debugLevel = D2D1_DEBUG_LEVEL_NONE;
 
         if (FAILED(D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, option, &pFactory)))
         {
@@ -119,6 +119,7 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam,
     case WM_PAINT:
     {
         HRESULT hr = CreateGraphicsResources(hWnd);
+        wasHandled = true;
         if (SUCCEEDED(hr))
         {
             PAINTSTRUCT ps;
