@@ -32,3 +32,6 @@
 *.app
 _build
 .vscode
+
+*.ilk
+*.pdb
