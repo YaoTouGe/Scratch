@@ -122,7 +122,8 @@ int main(void)
             GLX_RED_SIZE, 8,
             GLX_GREEN_SIZE, 8,
             GLX_BLUE_SIZE, 8,
-            GLX_ALPHA_SIZE, 24,
+            GLX_ALPHA_SIZE, 8,
+            GLX_DEPTH_SIZE, 24,
             GLX_STENCIL_SIZE, 8,
             GLX_DOUBLEBUFFER, True,
             // GLX_SAMPLE_BUFFERS, 1,
@@ -143,6 +144,7 @@ int main(void)
         fprintf(stderr, "Invalid GLX version\n");
         return -1;
     }
+    printf("GLX version %d %d\n", glx_major, glx_minor);
 
     default_screen = DefaultScreen(display);
     /* Query framebuffer configuration */
@@ -182,29 +184,37 @@ int main(void)
 
     /* Get a visual */
     vi = glXGetVisualFromFBConfig(display, fb_config);
+    printf("Chosen visual ID = 0x%lx\n", vi->visualid);
     
-    pConn = xcb_connect(0, 0);
+    /* establish connection to X server */
+    pConn = XGetXCBConnection(display);
+    if (!pConn)
+    {
+        XCloseDisplay(display);
+        fprintf(stderr, "Can't get xcb connection from display");
+        return -1;
+    }
 
-    pScreen = xcb_setup_roots_iterator(xcb_get_setup(pConn)).data;
+    XSetEventQueueOwner(display, XCBOwnsEventQueue);
+
+    /* Find XCB screen */
+    xcb_screen_iterator_t screen_iter = xcb_setup_roots_iterator(xcb_get_setup(pConn));
+    for(int screen_num = vi->screen;
+        screen_iter.rem && screen_num > 0;
+        --screen_num, xcb_screen_next(&screen_iter));
+    pScreen = screen_iter.data;
 
     window = pScreen->root;
 
-    foreground = xcb_generate_id(pConn);
-    mask = XCB_GC_FOREGROUND | XCB_GC_GRAPHICS_EXPOSURES;
-    values[0] = pScreen->black_pixel;
-    values[1] = 0;
-    xcb_create_gc(pConn, foreground, window, mask, values);
-
-    background = xcb_generate_id(pConn);
-    mask = XCB_GC_BACKGROUND | XCB_GC_GRAPHICS_EXPOSURES;
-    values[0] = pScreen->white_pixel;
-    values[1] = 0;
-    xcb_create_gc(pConn, background, window, mask, values);
+    /* Create XID's for colormap */
+    colormap = xcb_generate_id(pConn);
+    xcb_create_colormap(pConn, XCB_COLORMAP_ALLOC_NONE, colormap, window, vi->visualid);
 
     window = xcb_generate_id(pConn);
-    mask = XCB_CW_BACK_PIXEL | XCB_CW_EVENT_MASK;
-    values[0] = pScreen->white_pixel;
-    values[1] = XCB_EVENT_MASK_EXPOSURE | XCB_EVENT_MASK_KEY_PRESS;
+    mask = XCB_CW_EVENT_MASK | XCB_CW_COLORMAP;
+    values[0] = XCB_EVENT_MASK_EXPOSURE | XCB_EVENT_MASK_KEY_PRESS;
+    values[1] = colormap;
+    values[2] = 0;
 
     xcb_create_window(pConn,
                       XCB_COPY_FROM_PARENT,
@@ -213,8 +223,9 @@ int main(void)
                       640, 480,
                       10,
                       XCB_WINDOW_CLASS_INPUT_OUTPUT,
-                      pScreen->root_visual,
+                      vi->visualid,
                       mask, values);
+    XFree(vi);
 
     xcb_change_property(pConn, XCB_PROP_MODE_REPLACE, window,
                         XCB_ATOM_WM_NAME, XCB_ATOM_STRING, 8,
@@ -227,11 +238,103 @@ int main(void)
 
     xcb_flush(pConn);
 
+    /* Get the default screen's GLX extension list*/
+    glxExts = glXQueryExtensionsString(display, default_screen);
+
+    /* NOTE: It is not necessary to create or make current to a context before calling
+        glXGetProcAddressARB */
+    glXCreateContextAttribsARB = (glXCreateContextAttribsARBProc)glXGetProcAddressARB( (const GLubyte *) "glXCreateContextAttribsARB" );
+
+    /* Create OpenGL context */
+    ctxErrorOccurred = false;
+    XErrorHandler oldHandler = XSetErrorHandler(&ctxErrorHandler);
+
+    if(!isExtensionSupported(glxExts, "GLX_ARB_create_context") ||
+        !glXCreateContextAttribsARB)
+    {
+        printf("glXCreateContextAttribsARB() not found"
+            "... using old-style GLX context\n");
+        context = glXCreateNewContext(display, fb_config, GLX_RGBA_TYPE, 0, True);
+        if(!context)
+        {
+            fprintf(stderr, "glXCreateNewContext failed\n");
+            return -1;
+        }
+    }
+    else
+    {
+        int context_attribs[] =
+        {
+            GLX_CONTEXT_MAJOR_VERSION_ARB, 3,
+            GLX_CONTEXT_MINOR_VERSION_ARB, 0,
+            None
+        };
+        printf("Creating context\n");
+        context = glXCreateContextAttribsARB(display, fb_config, 0, True, context_attribs);
+
+        XSync(display, False);
+        if(!ctxErrorOccurred && context)
+            printf("Create GL 3.0 context\n");
+        else
+        {
+            context_attribs[1] = 1;
+            context_attribs[3] = 0;
+
+            ctxErrorOccurred = false;
+            printf("Failed to create GL 3.0 context"
+                "... using old-style GL context\n");
+                context = glXCreateContextAttribsARB(display, fb_config, 0, True, context_attribs);
+        }
+    }
+
+    XSync(display, false);
+    XSetErrorHandler(oldHandler);
+
+    if(ctxErrorOccurred || !context)
+    {
+        printf("Failed to create an OpenGL context");
+        return -1;
+    }
+
+    /* Verifying that context is a direct context */
+    if (!glXIsDirect(display, context))
+    {
+        printf("Indirect GLX rendering context obtained\n");
+    }
+    else
+    {
+        printf("Direct GLX rendering context obtained\n");
+    }
+
+    /* Create GLX Window */
+    glxwindow = glXCreateWindow(display, fb_config, window, 0);
+    if(!window)
+    {
+        xcb_destroy_window(pConn, window);
+        glXDestroyContext(display, context);
+
+        fprintf(stderr, "glXCreateWindow failed\n");
+        return -1;
+    }
+
+    drawable = glxwindow;
+
+    if(!glXMakeContextCurrent(display, drawable, drawable, context))
+    {
+        xcb_destroy_window(pConn, window);
+        glXDestroyContext(display, context);
+
+        fprintf(stderr, "glXMakeContextCurrent failed\n");
+        return -1;
+    }
+
     while ((pEvent = xcb_wait_for_event(pConn)) && !isQuit)
     {
         switch (pEvent->response_type & ~0x80)
         {
         case XCB_EXPOSE:
+            DrawQuad();
+            glXSwapBuffers(display, drawable);
             break;
 
         case XCB_KEY_PRESS:
@@ -241,5 +344,7 @@ int main(void)
         free(pEvent);
     }
 
+    /*Cleanup*/
+    xcb_disconnect(pConn);
     return 0;
 }
