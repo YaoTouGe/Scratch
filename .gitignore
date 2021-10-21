@@ -6,6 +6,8 @@
 *.lo
 *.o
 *.obj
+*.vso
+*.pso
 
 # Precompiled Headers
 *.gch
@@ -32,3 +34,6 @@
 *.app
 _build
 .vscode
+
+*.ilk
+*.pdb
