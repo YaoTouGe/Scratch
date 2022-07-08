@@ -1,6 +1,6 @@
 #pragma
 
-#include "IRuntimeModule.hpp"
+#include "IRuntimeModule.h"
 
 namespace My
 {

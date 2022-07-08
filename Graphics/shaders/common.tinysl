@@ -1,0 +1,54 @@
+Share
+{
+    #define PI 3.1415926535
+    #define PI_INV 1 / PI
+
+    struct Light
+    {
+        vec3 lightPos;
+        int lightType; // 0 directional, 1 point light, 2 spot light
+        vec3 lightColor;
+        float intensity;
+
+        // parameters for different light types
+    };
+
+    layout(std140, binding=0) uniform Globals
+    {
+        mat4 viewMatrix;
+        mat4 projectionMatrix;
+        mat4 viewProjectionMatrix;
+
+        Light lightData[16]; // maximum 16 lights, for more lights maybe we should use deferred or forward+ shading.
+        vec3 cameraPosition;
+        int lightCount;
+
+    };
+
+    layout(std140, binding=2) uniform PerObject
+    {
+        mat4 modelMatrix;
+        mat4 modelViewMatrix;
+        mat4 mvpMatrix;
+        mat4 padding2;
+    };
+
+    #define PER_MATERIAL layout(binding=1) uniform PerMaterial
+}
+
+Vertex
+{
+    layout(location=0) in vec3 position;
+    layout(location=1) in vec3 normal;
+    layout(location=2) in vec3 uv0;
+    layout(location=3) in vec3 uv1;
+    layout(location=4) in vec3 uv2;
+    layout(location=5) in vec3 color0;
+    layout(location=6) in vec3 color1;
+    layout(location=7) in vec3 color2;
+}
+
+Fragment
+{
+
+}

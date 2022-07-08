@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-#include "BaseApplication.hpp"
+#include "IApplication.h"
 
 using namespace My;
 
