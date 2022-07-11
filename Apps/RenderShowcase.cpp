@@ -150,6 +150,7 @@ namespace Application
         m_PrevX = x;
         m_PrevY = y;
     }
-
-    IApplication *g_app = new RenderShowcase("Render Showcase", 1280, 720);
+    
+    RenderShowcase showCase("Render Showcase", 1280, 720);
+    IApplication *g_app = &showCase;
 }
