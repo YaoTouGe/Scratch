@@ -82,6 +82,15 @@ namespace Graphics
         mDirty = false;
     }
 
+    void StaticMesh::CalculateTBN()
+    {
+        // triangles must not share vertex, and should contain nromal and uv attribs
+        if ((mLayoutFlag & LayoutName_Normal) && (mLayoutFlag & LayoutName_UV0))
+        {
+
+        }
+    }
+
     void StaticMesh::Bind()
     {
         glBindVertexArray(mVAOHandle);

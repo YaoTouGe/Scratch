@@ -7,5 +7,5 @@
 namespace Graphics
 {
     // Get arrow along y axis
-    StaticMesh::SP GenArrowMesh(float thickness, float arrowThickness, float length);
+    StaticMesh::SP GenArrowMesh(float thickness, float arrowThickness, float length, bool shareVertex = true);
 }

@@ -46,7 +46,9 @@ namespace Graphics
         LayoutName_Color0 = 1 << 5,
         LayoutName_Color1 = 1 << 6,
         LayoutName_Color2 = 1 << 7,
-        LayoutName_Max = LayoutName_Color2 + 1
+        LayoutName_Tangent = 1 << 8,
+        LayoutName_Bitangent = 1 << 9,
+        LayoutName_Max = LayoutName_Bitangent + 1
     };
 
     enum ShaderFlag

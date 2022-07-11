@@ -111,7 +111,8 @@ namespace Graphics
         void Bind() override;
 
     private:
-
+        void CalculateTBN();
+        
         uint32_t mLayoutFlag = LayoutName_None;
 
         std::vector<Eigen::Vector3f> mPositions;
