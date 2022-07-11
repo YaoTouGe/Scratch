@@ -11,7 +11,7 @@
 #include<memory>
 #include "Constants.h"
 
-namespace RenderSystem
+namespace Graphics
 {
     class Buffer
     {

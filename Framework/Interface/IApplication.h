@@ -2,7 +2,7 @@
 
 #include "IRuntimeModule.h"
 
-namespace My
+namespace Application
 {
     Interface IApplication : implements IRuntimeModule
     {
@@ -13,4 +13,4 @@ namespace My
 
         virtual bool IsQuit() = 0;
     };
-}; // namespace My
+}; // namespace Application

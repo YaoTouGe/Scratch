@@ -8,7 +8,7 @@
 
 using namespace std;
 
-namespace RenderSystem
+namespace Graphics
 {
     static std::string versionString = "#version 460 core";
 

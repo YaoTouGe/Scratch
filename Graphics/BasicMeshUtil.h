@@ -4,7 +4,7 @@
 #include <Eigen/Core>
 #include "StaticMesh.h"
 
-namespace RenderSystem
+namespace Graphics
 {
     // Get arrow along y axis
     StaticMesh::SP GenArrowMesh(float thickness, float arrowThickness, float length);

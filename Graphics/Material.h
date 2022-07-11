@@ -17,7 +17,7 @@
 #include "ShaderProgram.h"
 #include "Buffer.h"
 
-namespace RenderSystem
+namespace Graphics
 {
     class Material
     {

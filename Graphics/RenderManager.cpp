@@ -2,7 +2,7 @@
 #include "GL/glew.h"
 #include "InternalFunctions.h"
 
-namespace RenderSystem
+namespace Graphics
 {
     RenderManager* RenderManager::mInstance = nullptr;
 

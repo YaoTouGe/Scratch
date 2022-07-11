@@ -2,8 +2,11 @@
 
 #include <memory>
 
-namespace RenderSystem
+namespace Graphics
 {
+    /***********************************************
+     * enums
+     ***********************************************/
     enum BufferUsage
     {
         BufferUsage_StaticDraw = 0,
@@ -149,6 +152,10 @@ namespace RenderSystem
         TextureFormat_RGBA32,
     };
 
+    /***********************************************
+     * shader constants
+     ***********************************************/
+
     #define PriorityOpaque 1000
     #define PriorityTransparent 2000
     #define PriorityPostEffects 3000
@@ -162,7 +169,9 @@ namespace RenderSystem
     #define PerObjectUBOName "PerObject"
     #define INVALID_ID 0xffffffff
 
-    // colorful print codes
+    /***********************************************
+     * helper funcs
+     ***********************************************/
     #define PRINT_HEADER  "\033[95m"
     #define PRINT_OKBLUE  "\033[94m"
     #define PRINT_OKCYAN  "\033[96m"
@@ -196,4 +205,12 @@ namespace RenderSystem
         printf(msg_fmt, ##__VA_ARGS__);                      \
         printf("%s\n", PRINT_ENDC);                          \
     }
+
+    /***********************************************
+     * math constants
+     ***********************************************/
+
+#define PI 3.1415926535897932
+#define DegreesToRadians PI / 180
+#define RadiansToDegrees 180 / PI
 }

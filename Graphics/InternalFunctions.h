@@ -5,7 +5,7 @@
 #include "GL/glew.h"
 #include "Constants.h"
 
-namespace RenderSystem
+namespace Graphics
 {
     static uint32_t BufferUsage2Native[BufferUsage_Max] = {GL_STATIC_DRAW, GL_DYNAMIC_DRAW, GL_STREAM_DRAW};
     static uint32_t BufferType2Native[BufferType_Max] = {GL_ARRAY_BUFFER, GL_ELEMENT_ARRAY_BUFFER, GL_UNIFORM_BUFFER, GL_SHADER_STORAGE_BUFFER, GL_ATOMIC_COUNTER_BUFFER};

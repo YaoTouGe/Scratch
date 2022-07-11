@@ -2,7 +2,7 @@
 
 #include "Interface.h"
 
-namespace My
+namespace Application
 {
     // commnon interface implemented by runtime modules
     Interface IRuntimeModule

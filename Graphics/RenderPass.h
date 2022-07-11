@@ -9,7 +9,7 @@
 #pragma once
 #include<memory>
 
-namespace RenderSystem
+namespace Graphics
 {
     class RenderPass
     {

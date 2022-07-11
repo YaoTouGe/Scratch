@@ -58,7 +58,7 @@
 #include "string"
 #include "ShaderProgram.h"
 
-namespace RenderSystem
+namespace Graphics
 {
     class ShaderUtil
     {

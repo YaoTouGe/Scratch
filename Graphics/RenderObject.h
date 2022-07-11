@@ -14,7 +14,7 @@
 #include "VertexDataSource.h"
 #include "Material.h"
 
-namespace RenderSystem
+namespace Graphics
 {
     struct RenderObject
     {

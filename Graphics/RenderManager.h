@@ -18,7 +18,7 @@
 #include "StaticMesh.h"
 #include "RenderPipeline.h"
 
-namespace RenderSystem
+namespace Graphics
 {
     class RenderManager
     {

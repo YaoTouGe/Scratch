@@ -15,7 +15,7 @@
 #include "StaticMesh.h"
 #include "RenderObject.h"
 
-namespace RenderSystem
+namespace Graphics
 {
     struct Light
     {

@@ -13,7 +13,7 @@
 #include <vector>
 #include "Constants.h"
 
-namespace RenderSystem
+namespace Graphics
 {
     class ShaderProgram;
     struct ShaderProgramPropertyLayout

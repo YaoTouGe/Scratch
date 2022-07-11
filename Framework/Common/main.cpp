@@ -2,9 +2,9 @@
 
 #include "IApplication.h"
 
-using namespace My;
+using namespace Application;
 
-namespace My
+namespace Application
 {
     extern IApplication *g_app;
 }

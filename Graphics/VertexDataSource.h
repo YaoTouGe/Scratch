@@ -13,7 +13,7 @@
 
 #include <memory>
 
-namespace RenderSystem
+namespace Graphics
 {
     class VertexDataSource
     {    

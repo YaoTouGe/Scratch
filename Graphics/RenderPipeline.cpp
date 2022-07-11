@@ -2,7 +2,7 @@
 #include "RenderManager.h"
 #include "InternalFunctions.h"
 
-namespace RenderSystem
+namespace Graphics
 {
     RenderPipeline::RenderPipeline()
     {

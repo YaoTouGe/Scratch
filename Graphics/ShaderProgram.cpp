@@ -4,7 +4,7 @@
 #include "Constants.h"
 #include "InternalFunctions.h"
 
-namespace RenderSystem
+namespace Graphics
 {
     void ShaderProgram::SetVertexShaderSource(const char *src)
     {

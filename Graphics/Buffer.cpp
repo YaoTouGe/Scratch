@@ -4,7 +4,7 @@
 #include "memory.h"
 #include "InternalFunctions.h"
 
-namespace RenderSystem
+namespace Graphics
 {
     void Buffer::BufferData(void *data, size_t size, BufferUsage usage)
     {

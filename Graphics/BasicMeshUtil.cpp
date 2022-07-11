@@ -1,6 +1,6 @@
 #include "BasicMeshUtil.h"
 
-namespace RenderSystem
+namespace Graphics
 {
 
     // Along y axis cylinder

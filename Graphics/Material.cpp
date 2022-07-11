@@ -2,7 +2,7 @@
 #include "RenderManager.h"
 #include "GL/glew.h"
 
-namespace RenderSystem
+namespace Graphics
 {
     Material::Material(ShaderProgram::SP shader)
     {

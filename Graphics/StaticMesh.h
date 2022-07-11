@@ -15,7 +15,7 @@
 #include "Constants.h"
 #include "VertexDataSource.h"
 
-namespace RenderSystem
+namespace Graphics
 {
     /**
      * @brief Represent a static mesh with fixed vertex attribute layout:
