@@ -1,7 +1,7 @@
 #ifndef FRAMEWORK_APPS_RENDERSHOWCASE_H
 #define FRAMEWORK_APPS_RENDERSHOWCASE_H
 
-#include "WindowApplication.h"
+#include "Common/WindowApplication.h"
 #include "StaticMesh.h"
 #include "ShaderProgram.h"
 #include "Material.h"
@@ -16,6 +16,7 @@ namespace Application
 
     protected:
         virtual int Initialize() override;
+        virtual void Finalize() override;
         virtual void Render() override;
         virtual void KeyBoard(int key, int action) override;
         virtual void MouseMove(int x, int y) override;
@@ -29,11 +30,17 @@ namespace Application
         Graphics::Material::SP mMaterialRed;
         Graphics::Material::SP mMaterialBlue;
 
+        Graphics::Texture::SP mAlbedo;
+        Graphics::Texture::SP mNormal;
+        Graphics::Texture::SP mMetallic;
+        Graphics::Texture::SP mAo;
+        Graphics::Texture::SP mRoughness;
+
+        Graphics::ShaderProgram::SP mShaderProgram;
+
         Eigen::Matrix4f mViewMat;
         Eigen::Matrix4f mProjectionMat;
 
-        float mMetallic = 0;
-        float mRoughness = 1;
         Graphics::Camera *m_Camera;
     };
 }

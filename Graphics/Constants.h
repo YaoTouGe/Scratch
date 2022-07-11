@@ -68,7 +68,13 @@ namespace Graphics
         ProgramDataType_Vec2,
         ProgramDataType_Vec3,
         ProgramDataType_Vec4,
-        ProgramDataType_Mat4
+        ProgramDataType_Mat4,
+        ProgramDataType_Sampler1D,
+        ProgramDataType_Sampler2D,
+        ProgramDataType_Sampler3D,
+        ProgramDataType_SamplerCube,
+        ProgramDataType_Sampler1DShadow,
+        ProgramDataType_Sampler2DShadow
     };
 
     enum DepthStencilFunc
@@ -149,7 +155,28 @@ namespace Graphics
 
     enum TextureFormat
     {
-        TextureFormat_RGBA32,
+        TextureFormat_R8G8B8A8 = 0,
+        TextureFormat_R8G8B8
+    };
+
+    enum TextureFilter
+    {
+        TextureFilter_Linear = 0,
+        TextureFilter_Nearest,
+        TextureFilter_LinearMipmapLinear,
+        TextureFilter_LinearMipmapNearest,
+        TextureFilter_NearestMimapNearest,
+        TextureFilter_NearestMipmapLinear,
+        TextureFilter_Max
+    };
+
+    enum TextureWrapMode
+    {
+        TextureWrapMode_ClampToEdge = 0,
+        TextureWrapMode_ClampToBorder,
+        TextureWrapMode_Repeat,
+        TextureWrapMode_MirroredRepeat,
+        TextureWrapMode_Max
     };
 
     /***********************************************
@@ -182,24 +209,24 @@ namespace Graphics
     #define PRINT_BOLD  "\033[1m"
     #define PRINT_UNDERLINE  "\033[4m"
 
-#define RS_LOG_OK(msg)                                          \
+#define GFX_LOG_OK(msg)                                          \
     {                                                           \
         printf("%s%s%s\n", PRINT_OKGREEN, msg, PRINT_ENDC);     \
     }
 
-#define RS_LOG_ERROR(msg)                                                            \
+#define GFX_LOG_ERROR(msg)                                                            \
     {                                                                                \
         printf("%s%s(%d)\n%s%s\n", PRINT_FAIL, __FILE__, __LINE__, msg, PRINT_ENDC); \
     }
 
-#define RS_LOG_OK_FMT(msg_fmt, ...)         \
+#define GFX_LOG_OK_FMT(msg_fmt, ...)         \
     {                                       \
         printf(PRINT_OKGREEN);              \
         printf(msg_fmt, ##__VA_ARGS__);     \
         printf("%s\n", PRINT_ENDC);         \
     }
 
-#define RS_LOG_ERROR_FMT(msg_fmt, ...)                       \
+#define GFX_LOG_ERROR_FMT(msg_fmt, ...)                       \
     {                                                        \
         printf("%s%s(%d)\n", PRINT_FAIL, __FILE__, __LINE__);\
         printf(msg_fmt, ##__VA_ARGS__);                      \

@@ -84,7 +84,7 @@ namespace Graphics
     {
         if (mGlobalData.lightCount >= maxLightCount)
         {
-            RS_LOG_ERROR("Too many lights!");
+            GFX_LOG_ERROR("Too many lights!");
             return;
         }
 

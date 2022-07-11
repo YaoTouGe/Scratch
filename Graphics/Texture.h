@@ -9,6 +9,7 @@
 #pragma once
 
 #include <memory>
+#include "Constants.h"
 
 namespace Graphics
 {
@@ -16,5 +17,24 @@ namespace Graphics
     {
     public:
         typedef std::shared_ptr<Texture> SP;
+        Texture(uint32_t handle, TextureType type, TextureFormat format, bool generateMipmap):
+            mHandle(handle), mType(type), mFormat(format), mGenerateMipmap(generateMipmap){}
+        ~Texture() { free(mData); }
+
+        void SetWrapMode(TextureWrapMode S, TextureWrapMode T);
+        void SetFilter(TextureFilter min, TextureFilter mag);
+
+        void TexData(int width, int height, int nchannel, void *data, int level);
+        void LoadFromFile(const char *filePath);
+        void BindTexture();
+
+        uint32_t GetHandle() { return mHandle; }
+
+    private:
+        uint32_t mHandle;
+        TextureType mType;
+        TextureFormat mFormat;
+        void *mData = nullptr;
+        bool mGenerateMipmap;
     };
 }

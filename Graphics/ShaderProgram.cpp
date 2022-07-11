@@ -41,7 +41,7 @@ namespace Graphics
         {
             char infoLog[512];
             glGetProgramInfoLog(mProgramHandle, 512, NULL, infoLog);
-            RS_LOG_ERROR(infoLog);
+            GFX_LOG_ERROR(infoLog);
             return false;
         }
 
@@ -56,19 +56,19 @@ namespace Graphics
         mGlobalUniformBlockIdx = glGetUniformBlockIndex(mProgramHandle, GlobalUBOName);
         if (mGlobalUniformBlockIdx == GL_INVALID_INDEX)
         {
-            RS_LOG_ERROR("Can't find gloabl uniform block!");
+            GFX_LOG_ERROR("Can't find gloabl uniform block!");
         }
 
         mPerMaterialUniformBlockIdx = glGetUniformBlockIndex(mProgramHandle, PerMaterialUBOName);
         if (mPerMaterialUniformBlockIdx == GL_INVALID_INDEX)
         {
-            RS_LOG_ERROR("Can't find per material uniform block!");
+            GFX_LOG_ERROR("Can't find per material uniform block!");
         }
 
         mPerObjectUniformBlockIdx = glGetUniformBlockIndex(mProgramHandle, PerObjectUBOName);
         if (mPerObjectUniformBlockIdx == GL_INVALID_INDEX)
         {
-            RS_LOG_ERROR("Can't find per object uniform block!");
+            GFX_LOG_ERROR("Can't find per object uniform block!");
         }
 
         // Set uniform block index binding, UBOs will be bound to the same point when drawing.
@@ -175,16 +175,16 @@ namespace Graphics
     {
         for (size_t i = 0; i < uniformInfos.size(); ++i)
         {
-            RS_LOG_OK_FMT("%s: location %d, type %d", uniformInfos[i].name.data(), uniformInfos[i].location, uniformInfos[i].type);
+            GFX_LOG_OK_FMT("%s: location %d, type %d", uniformInfos[i].name.data(), uniformInfos[i].location, uniformInfos[i].type);
         }
 
         for (size_t i = 0; i < uniformBlockInfos.size(); ++i)
         {
             auto& blockInfo = uniformBlockInfos[i];
-            RS_LOG_OK_FMT("%s: size %d", blockInfo.blockName.data(), (int)blockInfo.blockSize);
+            GFX_LOG_OK_FMT("%s: size %d", blockInfo.blockName.data(), (int)blockInfo.blockSize);
             for (size_t j = 0; j < blockInfo.uniformNames.size(); ++j)
             {
-                RS_LOG_OK_FMT("    %s: offset %d", blockInfo.uniformNames[j].data(), (int)blockInfo.uniformOffset[j]);
+                GFX_LOG_OK_FMT("    %s: offset %d", blockInfo.uniformNames[j].data(), (int)blockInfo.uniformOffset[j]);
             }
         }
     }

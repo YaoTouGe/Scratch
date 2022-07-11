@@ -1,6 +1,12 @@
 #include <stdio.h>
 
-#include "IApplication.h"
+#include "Interface/IApplication.h"
+
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include "stb/stb_image_write.h"
+
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb/stb_image.h"
 
 using namespace Application;
 

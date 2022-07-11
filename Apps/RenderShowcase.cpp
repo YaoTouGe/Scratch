@@ -25,24 +25,64 @@ namespace Application
 
         mArrowMesh = GenArrowMesh(0.02, 0.04, 1);
 
-        auto arrowProgram = ShaderUtil::LoadProgramFromTinySL("Graphics/shaders/axis_arrow.tinysl");
-        mMaterialGreen = std::make_shared<Material>(arrowProgram);
-        mMaterialRed = std::make_shared<Material>(arrowProgram);
-        mMaterialBlue = std::make_shared<Material>(arrowProgram);
+        mAlbedo = RenderManager::Instance()->AllocTexture(TextureType_2D, TextureFormat_R8G8B8, true);
+        mAlbedo->SetFilter(TextureFilter_LinearMipmapLinear, TextureFilter_Linear);
+        mAlbedo->SetWrapMode(TextureWrapMode_Repeat, TextureWrapMode_Repeat);
+        mAlbedo->LoadFromFile("Resources/dull-copper_albedo.png");
+
+        mNormal = RenderManager::Instance()->AllocTexture(TextureType_2D, TextureFormat_R8G8B8A8, true);
+        mNormal->SetFilter(TextureFilter_LinearMipmapLinear, TextureFilter_Linear);
+        mNormal->SetWrapMode(TextureWrapMode_Repeat, TextureWrapMode_Repeat);
+        mNormal->LoadFromFile("Resources/dull-copper_normal-dx.png");
+
+        mMetallic = RenderManager::Instance()->AllocTexture(TextureType_2D, TextureFormat_R8G8B8, true);
+        mMetallic->SetFilter(TextureFilter_LinearMipmapLinear, TextureFilter_Linear);
+        mMetallic->SetWrapMode(TextureWrapMode_Repeat, TextureWrapMode_Repeat);
+        mMetallic->LoadFromFile("Resources/dull-copper_metallic.png");
+
+        mAo = RenderManager::Instance()->AllocTexture(TextureType_2D, TextureFormat_R8G8B8A8, true);
+        mAo->SetFilter(TextureFilter_LinearMipmapLinear, TextureFilter_Linear);
+        mAo->SetWrapMode(TextureWrapMode_Repeat, TextureWrapMode_Repeat);
+        mAo->LoadFromFile("Resources/dull-copper_ao.png");
+
+        mRoughness = RenderManager::Instance()->AllocTexture(TextureType_2D, TextureFormat_R8G8B8, true);
+        mRoughness->SetFilter(TextureFilter_LinearMipmapLinear, TextureFilter_Linear);
+        mRoughness->SetWrapMode(TextureWrapMode_Repeat, TextureWrapMode_Repeat);
+        mRoughness->LoadFromFile("Resources/dull-copper_roughness.png");
+
+        mShaderProgram = ShaderUtil::LoadProgramFromTinySL("Graphics/shaders/axis_arrow.tinysl");
+        mMaterialGreen = std::make_shared<Material>(mShaderProgram);
+        mMaterialRed = std::make_shared<Material>(mShaderProgram);
+        mMaterialBlue = std::make_shared<Material>(mShaderProgram);
 
         mMaterialRed->SetValue("mainColor", Eigen::Vector4f(1, 0, 0, 1));
-        mMaterialRed->SetValue("roughness", mRoughness);
-        mMaterialRed->SetValue("metallic", mMetallic);
+        mMaterialRed->SetTexture("roughnessTex", mRoughness);
+        mMaterialRed->SetTexture("metallicTex", mMetallic);
+        mMaterialRed->SetTexture("albedoTex", mAlbedo);
+        mMaterialRed->SetTexture("aoTex", mAo);
+        mMaterialRed->SetTexture("normalTex", mNormal);
 
         mMaterialGreen->SetValue("mainColor", Eigen::Vector4f(0, 1, 0, 1));
-        mMaterialGreen->SetValue("roughness", mRoughness);
-        mMaterialGreen->SetValue("metallic", mMetallic);
+        mMaterialGreen->SetTexture("roughnessTex", mRoughness);
+        mMaterialGreen->SetTexture("metallicTex", mMetallic);
+        mMaterialGreen->SetTexture("albedoTex", mAlbedo);
+        mMaterialGreen->SetTexture("aoTex", mAo);
+        mMaterialGreen->SetTexture("normalTex", mNormal);
 
         mMaterialBlue->SetValue("mainColor", Eigen::Vector4f(0, 0, 1, 1));
-        mMaterialBlue->SetValue("roughness", mRoughness);
-        mMaterialBlue->SetValue("metallic", mMetallic);
-
+        mMaterialBlue->SetTexture("roughnessTex", mRoughness);
+        mMaterialBlue->SetTexture("metallicTex", mMetallic);
+        mMaterialBlue->SetTexture("albedoTex", mAlbedo);
+        mMaterialBlue->SetTexture("aoTex", mAo);
+        mMaterialBlue->SetTexture("normalTex", mNormal);
         return 0;
+    }
+
+    void RenderShowcase::Finalize()
+    {
+        WindowApplication::Finalize();
+        RenderManager::Instance()->ReleaseShaderProgram(mShaderProgram);
+        RenderManager::Instance()->ReleaseTexture(mAlbedo);
     }
 
     void RenderShowcase::Render()
@@ -63,6 +103,12 @@ namespace Application
         l.lightPos = Eigen::Vector3f(1, 1, 1);
         l.intensity = 2;
         rm->CollectLight(l);
+        l.lightPos = Eigen::Vector3f(-1, 1, 1);
+        rm->CollectLight(l);
+        l.lightPos = Eigen::Vector3f(1, -1, 1);
+        rm->CollectLight(l);
+        l.lightPos = Eigen::Vector3f(1, 1, -1);
+        rm->CollectLight(l);
 
         DrawAxis(Eigen::Matrix4f::Identity());
         // rm->EnableWireFrame(true);
@@ -71,34 +117,34 @@ namespace Application
 
     void RenderShowcase::KeyBoard(int key, int action)
     {
-        switch (key)
-        {
-        case GLFW_KEY_W:
-            mMetallic += 0.05f;
-            mMaterialRed->SetValue("metallic", mMetallic);
-            mMaterialGreen->SetValue("metallic", mMetallic);
-            mMaterialBlue->SetValue("metallic", mMetallic);
-            break;
+        // switch (key)
+        // {
+        // case GLFW_KEY_W:
+        //     mMetallic += 0.05f;
+        //     mMaterialRed->SetValue("metallic", mMetallic);
+        //     mMaterialGreen->SetValue("metallic", mMetallic);
+        //     mMaterialBlue->SetValue("metallic", mMetallic);
+        //     break;
 
-        case GLFW_KEY_S:
-            mMetallic -= 0.05f;
-            mMaterialRed->SetValue("metallic", mMetallic);
-            mMaterialGreen->SetValue("metallic", mMetallic);
-            mMaterialBlue->SetValue("metallic", mMetallic);
-            break;
-        case GLFW_KEY_A:
-            mRoughness -= 0.05f;
-            mMaterialRed->SetValue("roughness", mRoughness);
-            mMaterialGreen->SetValue("roughness", mRoughness);
-            mMaterialBlue->SetValue("roughness", mRoughness);
-            break;
-        case GLFW_KEY_D:
-            mRoughness += 0.05f;
-            mMaterialRed->SetValue("roughness", mRoughness);
-            mMaterialGreen->SetValue("roughness", mRoughness);
-            mMaterialBlue->SetValue("roughness", mRoughness);
-            break;
-        }
+        // case GLFW_KEY_S:
+        //     mMetallic -= 0.05f;
+        //     mMaterialRed->SetValue("metallic", mMetallic);
+        //     mMaterialGreen->SetValue("metallic", mMetallic);
+        //     mMaterialBlue->SetValue("metallic", mMetallic);
+        //     break;
+        // case GLFW_KEY_A:
+        //     mRoughness -= 0.05f;
+        //     mMaterialRed->SetValue("roughness", mRoughness);
+        //     mMaterialGreen->SetValue("roughness", mRoughness);
+        //     mMaterialBlue->SetValue("roughness", mRoughness);
+        //     break;
+        // case GLFW_KEY_D:
+        //     mRoughness += 0.05f;
+        //     mMaterialRed->SetValue("roughness", mRoughness);
+        //     mMaterialGreen->SetValue("roughness", mRoughness);
+        //     mMaterialBlue->SetValue("roughness", mRoughness);
+        //     break;
+        // }
     }
 
     void RenderShowcase::DrawAxis(const Eigen::Matrix4f &transform)

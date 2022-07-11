@@ -28,11 +28,12 @@ namespace Graphics
         /****************** graphics resources ***********************/
 
         Buffer::SP AllocBuffer(BufferType type);
-        Texture::SP AllocTexture() { return nullptr; }
-        RenderTexture::SP AllocRenderTexture();
+        Texture::SP AllocTexture(TextureType type, TextureFormat format, bool generateMipmap);
+        RenderTexture::SP AllocRenderTexture(TextureFormat format);
         ShaderProgram::SP AllocShaderProgram();
 
         void ReleaseBuffer(Buffer::SP buffer);
+        void ReleaseTexture(Texture::SP tex);
         void ReleaseShaderProgram(ShaderProgram::SP shaderProgram);
 
         void SetCurrentRenderTexture(RenderTexture::SP rt) {}
@@ -64,9 +65,23 @@ namespace Graphics
 
         void EnableWireFrame(bool enabled);
         void CollectLight(const Light &light) { mPipeline->CollectLight(light); }
-
         void EndFrame() { mPipeline->Submit(); }
 
+        struct GraphicsInfo
+        {
+            int uniformBufferOffsetAlignment;
+            int maxTextureImageUnits;
+            int maxVertexTextureImageUnits;
+
+            void printInfo()
+            {
+                GFX_LOG_OK_FMT("Graphics Info:\n    UNIFORM_BUFFER_OFFSET_ALIGNMENT: %d", uniformBufferOffsetAlignment);
+                GFX_LOG_OK_FMT("    MAX_TEXTURE_IMAGE_UNITS: %d", maxTextureImageUnits);
+                GFX_LOG_OK_FMT("    MAX_VERTEX_TEXTURE_IMAGE_UNITS: %d", maxVertexTextureImageUnits);
+            }
+        };
+        const GraphicsInfo &GetSystemInfo() { return mSystemInfo; }
+        
     private:
         RenderManager();
         ~RenderManager() {}
@@ -74,5 +89,6 @@ namespace Graphics
         static RenderManager *mInstance;
         RenderPipeline::SP mPipeline;
         RenderTexture::SP mRenderTexture;
+        GraphicsInfo mSystemInfo;
     };
 }

@@ -9,6 +9,7 @@ namespace Graphics
         mMaterialUniformBuffer = RenderManager::Instance()->AllocBuffer(BufferType_UniformBuffer);
         mShader = shader;
         auto propertyLayout = mShader->GetPropertyLayout();
+        // propertyLayout->PrintLayoutInfos();
 
         // only recognize PerMaterial UBO currently, support arbitary UBO later.
         for (size_t i = 0; i < propertyLayout->uniformBlockInfos.size(); ++i)
@@ -51,14 +52,9 @@ namespace Graphics
         if (!mDirty)
             return;
         mMaterialUniformBuffer->BufferData(mPerMaterialBuffer, mPerMaterialBufferSize, BufferUsage_StaticDraw);
-        mDirty = false;
-    }
 
-    void Material::Use()
-    {
         mShader->UseProgram();
-        RenderManager::Instance()->BindBufferBase(mMaterialUniformBuffer, PerMaterialUBOBindPoint);
-        for(auto& c : mUniformCaches)
+        for (auto &c : mUniformCaches)
         {
             if (c.second.data == nullptr)
                 continue;
@@ -66,10 +62,10 @@ namespace Graphics
             switch (c.second.type)
             {
             case ProgramDataType_Float:
-                glUniform1fv(c.second.location, 1, (GLfloat*)c.second.data);
+                glUniform1fv(c.second.location, 1, reinterpret_cast<GLfloat *>(&c.second.data));
                 break;
             case ProgramDataType_Int:
-                glUniform1iv(c.second.location, 1, (GLint *)c.second.data);
+                glUniform1iv(c.second.location, 1, reinterpret_cast<GLint *>(&c.second.data));
                 break;
             case ProgramDataType_Vec2:
                 glUniform2fv(c.second.location, 1, (GLfloat *)c.second.data);
@@ -84,6 +80,29 @@ namespace Graphics
                 glUniformMatrix4fv(c.second.location, 1, GL_FALSE, (GLfloat *)c.second.data);
                 break;
             }
+        }
+
+        int texUnit = 0;
+        for (auto kv : mTextureBinds)
+        {
+            glUniform1i(kv.first, texUnit);
+            ++texUnit;
+        }
+
+        mDirty = false;
+    }
+
+    void Material::Use()
+    {
+        mShader->UseProgram();
+        RenderManager::Instance()->BindBufferBase(mMaterialUniformBuffer, PerMaterialUBOBindPoint);
+
+        int texUnit = 0;
+        for (auto kv : mTextureBinds)
+        {
+            glActiveTexture(texUnit + GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, kv.second);
+            ++texUnit;
         }
     }
 

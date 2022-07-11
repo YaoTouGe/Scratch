@@ -17,6 +17,8 @@ namespace Graphics
                                                         GL_ONE_MINUS_CONSTANT_COLOR, GL_CONSTANT_ALPHA, GL_ONE_MINUS_CONSTANT_ALPHA};
     static uint32_t BlendEquation2Native[BlendEquation_Max] = {GL_FUNC_ADD, GL_FUNC_SUBTRACT, GL_FUNC_REVERSE_SUBTRACT};
     static uint32_t CullFace2Native[CullFace_Max] = {GL_FRONT, GL_BACK, GL_FRONT_AND_BACK};
+    static uint32_t Filter2Native[TextureFilter_Max] = {GL_LINEAR, GL_NEAREST, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR_MIPMAP_NEAREST, GL_NEAREST_MIPMAP_NEAREST, GL_NEAREST_MIPMAP_LINEAR};
+    static uint32_t WrapMode2Native[TextureWrapMode_Max] = {GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_REPEAT, GL_MIRRORED_REPEAT};
 
     inline uint32_t GetNativeBufferType(BufferType t)
     {
@@ -58,6 +60,37 @@ namespace Graphics
         return CullFace2Native[face];
     }
 
+    inline uint32_t GetNativeWrapMode(TextureWrapMode wrapMode)
+    {
+        return WrapMode2Native[wrapMode];
+    }
+
+    inline uint32_t GetNativeFilter(TextureFilter filter)
+    {
+        return Filter2Native[filter];
+    }
+
+    inline void GetNativeTypeAndFormat(TextureFormat format, uint32_t *nativeType, uint32_t *nativeFormat, int *channel)
+    {
+        switch (format)
+        {
+        case TextureFormat_R8G8B8:
+            *nativeFormat = GL_RGB;
+            *nativeType = GL_UNSIGNED_BYTE;
+            *channel = 3;
+            break;
+        case TextureFormat_R8G8B8A8:
+            *nativeFormat = GL_RGBA;
+            *nativeType = GL_UNSIGNED_BYTE;
+            *channel = 4;
+            break;
+        default:
+            GFX_LOG_ERROR("Unsupported format!!");
+            *channel = 0;
+            break;
+        }
+    }
+
     inline ProgramDataType GLType2ProgramDataType(int GLType)
     {
         switch (GLType)
@@ -74,6 +107,18 @@ namespace Graphics
             return ProgramDataType_Int;
         case GL_FLOAT_MAT4:
             return ProgramDataType_Mat4;
+        case GL_SAMPLER_1D:
+            return ProgramDataType_Sampler1D;
+        case GL_SAMPLER_2D:
+            return ProgramDataType_Sampler2D;
+        case GL_SAMPLER_3D:
+            return ProgramDataType_Sampler3D;
+        case GL_SAMPLER_CUBE:
+            return ProgramDataType_SamplerCube;
+        case GL_SAMPLER_1D_SHADOW:
+            return ProgramDataType_Sampler1DShadow;
+        case GL_SAMPLER_2D_SHADOW:
+            return ProgramDataType_Sampler2DShadow;
         }
 
         return ProgramDataType_None;
@@ -112,7 +157,7 @@ namespace Graphics
                 error = "INVALID_FRAMEBUFFER_OPERATION";      \
                 break;                                        \
             }                                                 \
-            RS_LOG_ERROR_FMT("GL error detected: %s", error); \
+            GFX_LOG_ERROR_FMT("GL error detected: %s", error); \
         }                                                     \
     }
 #endif

@@ -193,7 +193,7 @@ namespace Graphics
         {
             for (int sectionId = 0; sectionId < SLSection_Max; ++sectionId)
             {
-                RS_LOG_OK_FMT("Section %s:\n%s", sectionEnum2String[sectionId], sectionCode[sectionId].c_str());
+                GFX_LOG_OK_FMT("Section %s:\n%s", sectionEnum2String[sectionId], sectionCode[sectionId].c_str());
             }
         }
     };
@@ -214,7 +214,7 @@ namespace Graphics
         size_t fileSize = ReadFileContent(filePath, nullptr, 0);
         if (fileSize == 0)
         {
-            RS_LOG_ERROR_FMT("Can't open file: \"%s\"", filePath.c_str());
+            GFX_LOG_ERROR_FMT("Can't open file: \"%s\"", filePath.c_str());
             return;
         }
         char *sourceBuffer = new char[fileSize + 1];
@@ -242,7 +242,7 @@ namespace Graphics
                     }
                     else
                     {
-                        RS_LOG_ERROR_FMT("Duplicated include file: %s", includeFile.c_str());
+                        GFX_LOG_ERROR_FMT("Duplicated include file: %s", includeFile.c_str());
                     }
                 }
                 break;
@@ -254,7 +254,7 @@ namespace Graphics
                     // new section start
                     ctx.sectionStart = lexer.CurrentPtr();
                     ctx.currentSectionName = ctx.prevName;
-                    // RS_LOG_OK_FMT("begin section: %s", ctx.currentSectionName.c_str());
+                    // GFX_LOG_OK_FMT("begin section: %s", ctx.currentSectionName.c_str());
                 }
                 ++ctx.prevLeftBraceCount;
                 break;
@@ -265,12 +265,12 @@ namespace Graphics
                     auto iter = sectionName2Enum.find(ctx.currentSectionName);
                     if (iter == sectionName2Enum.end())
                     {
-                        RS_LOG_ERROR_FMT("Unrecognized section [%s] in:%s", ctx.currentSectionName.c_str(), filePath.c_str());
+                        GFX_LOG_ERROR_FMT("Unrecognized section [%s] in:%s", ctx.currentSectionName.c_str(), filePath.c_str());
                     }
                     else
                     {
                         currentContent.sectionCode[iter->second].assign(ctx.sectionStart, ctx.tokenStart);
-                        // RS_LOG_OK_FMT("section content: %s", currentContent.sectionCode[iter->second].c_str());
+                        // GFX_LOG_OK_FMT("section content: %s", currentContent.sectionCode[iter->second].c_str());
                     }
                     
                     ctx.sectionStart = nullptr;
@@ -278,7 +278,7 @@ namespace Graphics
                 }
                 else if (ctx.prevLeftBraceCount == 0)
                 {
-                    RS_LOG_ERROR_FMT("Shader brace not match in:%s", filePath.c_str());
+                    GFX_LOG_ERROR_FMT("Shader brace not match in:%s", filePath.c_str());
                     delete[] sourceBuffer;
                     return;
                 }
@@ -302,7 +302,7 @@ namespace Graphics
         name.assign(tokenStart, lexer.CurrentPtr());                   \
         if (type != TokenType_Name)                                    \
         {                                                              \
-            RS_LOG_ERROR_FMT("Invalid states name: %s", name.c_str()); \
+            GFX_LOG_ERROR_FMT("Invalid states name: %s", name.c_str()); \
             return;                                                    \
         }                                                              \
     }
@@ -318,7 +318,7 @@ namespace Graphics
     }                                                                \
     else                                                             \
     {                                                                \
-        RS_LOG_ERROR_FMT("Invalid states option: %s", name.c_str()); \
+        GFX_LOG_ERROR_FMT("Invalid states option: %s", name.c_str()); \
         return;                                                      \
     }
 
@@ -331,7 +331,7 @@ namespace Graphics
         }                                                                \
         else                                                             \
         {                                                                \
-            RS_LOG_ERROR_FMT("Invalid states option: %s", name.c_str()); \
+            GFX_LOG_ERROR_FMT("Invalid states option: %s", name.c_str()); \
             return;                                                      \
         }                                                                \
     }
@@ -345,7 +345,7 @@ namespace Graphics
             setOption = strtol(name.c_str(), &end, 10);                      \
             if (end == nullptr)                                              \
             {                                                                \
-                RS_LOG_ERROR_FMT("Invalid states option: %s", name.c_str()); \
+                GFX_LOG_ERROR_FMT("Invalid states option: %s", name.c_str()); \
                 return;                                                      \
             }                                                                \
         }                                                                    \
@@ -504,7 +504,7 @@ namespace Graphics
             }
             else
             {
-                RS_LOG_ERROR_FMT("Unrecognized state command: %s", name.c_str());
+                GFX_LOG_ERROR_FMT("Unrecognized state command: %s", name.c_str());
             }
         }
     }
@@ -518,7 +518,7 @@ namespace Graphics
 
         if (slContents.size() == 0)
         {
-            RS_LOG_ERROR_FMT("Shader parse error: \"%s\"", tinyslFile.c_str());
+            GFX_LOG_ERROR_FMT("Shader parse error: \"%s\"", tinyslFile.c_str());
             return nullptr;
         }
 

@@ -16,6 +16,7 @@
 #include "Eigen/Core"
 #include "ShaderProgram.h"
 #include "Buffer.h"
+#include "Texture.h"
 
 namespace Graphics
 {
@@ -48,14 +49,34 @@ namespace Graphics
                 auto iterUniform = mUniformCaches.find(name);
                 if (iterUniform == mUniformCaches.end())
                 {
-                    RS_LOG_ERROR_FMT("Set a undefined uniform: %s", name.c_str());
+                    GFX_LOG_ERROR_FMT("Set a undefined uniform: %s", name.c_str());
                     return;
                 }
-                // TODO: use mempool later
-                iterUniform->second.data = malloc(sizeof(T));
-                *reinterpret_cast<T *>(iterUniform->second.data) = value;
+
+                if (sizeof(T) <= sizeof(void *))
+                {
+                    *reinterpret_cast<T *>(&iterUniform->second.data) = value;
+                }
+                else
+                {
+                    iterUniform->second.data = malloc(sizeof(T));
+                    *reinterpret_cast<T *>(iterUniform->second.data) = value;
+                }
                 mDirty = true;
             }
+        }
+
+        void SetTexture(const std::string &name, Texture::SP tex)
+        {
+            auto iter = mUniformCaches.find(name);
+            if (iter == mUniformCaches.end())
+            {
+                GFX_LOG_ERROR_FMT("Set a undefined texture: %s", name.c_str());
+                return;
+            }
+
+            mTextureBinds.insert(std::make_pair(iter->second.location, tex->GetHandle()));
+            mDirty = true;
         }
 
         int GetPriority() { return mPriority; }
@@ -94,5 +115,6 @@ namespace Graphics
 
         std::unordered_map<std::string, UniformCache> mUniformCaches;
         std::unordered_map<std::string, int> mPerMaterialBlockOffset;
+        std::unordered_map<int, uint32_t> mTextureBinds;
     };
 }

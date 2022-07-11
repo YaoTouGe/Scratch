@@ -6,15 +6,20 @@ Share
     PER_MATERIAL
     {
         vec4 mainColor;
-        float metallic;
-        float roughness;
     };
 
     struct AppData
     {
         vec3 worldPos;
         vec3 worldNormal;
+        vec2 uv0;
     };
+
+    uniform sampler2D albedoTex;
+    uniform sampler2D metallicTex;
+    uniform sampler2D roughnessTex;
+    uniform sampler2D aoTex;
+    uniform sampler2D normalTex;
 }
 
 Vertex
@@ -26,6 +31,7 @@ Vertex
         vec4 worldPos = modelMatrix * vec4(position, 1.0);
         data.worldNormal = vec3(modelMatrix * vec4(normal, 0.0));
         data.worldPos = vec3(worldPos);
+        data.uv0 = uv0.xy;
         gl_Position = viewProjectionMatrix * worldPos;
     }
 }
@@ -37,6 +43,12 @@ Fragment
 
     void main()
     {
+        vec3 albedo = texture(albedoTex, data.uv0).xyz * mainColor.xyz;
+        float roughness = texture(roughnessTex, data.uv0).x;
+        float metallic = texture(metallicTex, data.uv0).x;
+        float ao = texture(aoTex, data.uv0).x;
+        vec3 localNormal = texture(normalTex, data.uv0).xyz * 2 - 1;
+
         // vec3 lightDir = normalize(lightData[0].lightPos - data.worldPos);
         vec3 viewDir = normalize(cameraPosition - data.worldPos);
         vec3 normalDir = normalize(data.worldNormal);
@@ -57,7 +69,7 @@ Fragment
             float NdotH = max(dot(normalDir, halfDir), 0.0);
 
             vec3 F0 = vec3(0.04, 0.04, 0.04);
-            F0 = mix(F0, mainColor.xyz, m);
+            F0 = mix(F0, albedo, m);
 
             vec3 f = FresnelSchlick(max(dot(viewDir, halfDir), 0), F0);
             vec3 specular = directBRDF(NdotV, NdotL, NdotH, r, f);
@@ -65,12 +77,12 @@ Fragment
             vec3 kS = f;
             vec3 kD = vec3(1, 1, 1) - kS;
             kD *= 1 - m;
-            vec3 c = (kD * mainColor.xyz / PI + specular) * max(dot(normalDir, lightDir), 0) * light.lightColor * light.intensity;
+            vec3 c = (kD * albedo / PI + specular) * max(dot(normalDir, lightDir), 0) * light.lightColor * light.intensity;
 
             color += c;
         }
         
         // TODO: environment light
-        FragColor = vec4(color /*+ ambientColor.xyz * mainColor.xyz*/, 1);
+        FragColor = vec4(color * ao/*+ ambientColor.xyz * mainColor.xyz*/, 1);
     }
 }

@@ -23,6 +23,22 @@ namespace Graphics
         return std::make_shared<Buffer>(bufferHandle, type);
     }
 
+    Texture::SP RenderManager::AllocTexture(TextureType type, TextureFormat format, bool generateMipmap)
+    {
+        GLuint texHandle;
+        glGenTextures(1, &texHandle);
+
+        return std::make_shared<Texture>(texHandle, type, format, generateMipmap);
+    }
+
+    void RenderManager::ReleaseTexture(Texture::SP tex)
+    {
+        if (tex == nullptr)
+            return;
+        auto handle = tex->GetHandle();
+        glDeleteTextures(1, &handle);
+    }
+
     void RenderManager::ReleaseBuffer(Buffer::SP buffer)
     {
         if (buffer == nullptr)
@@ -118,9 +134,12 @@ namespace Graphics
 
     RenderManager::RenderManager()
     {
-        int alignment;
-        glGetIntegerv(GL_UNIFORM_BUFFER_OFFSET_ALIGNMENT, &alignment);
-        RS_LOG_OK_FMT("GL Info:\n    UNIFORM_BUFFER_OFFSET_ALIGNMENT: %d", alignment);
+        GraphicsInfo info;
+        glGetIntegerv(GL_UNIFORM_BUFFER_OFFSET_ALIGNMENT, &info.uniformBufferOffsetAlignment);
+        glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &info.maxTextureImageUnits);
+        glGetIntegerv(GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS, &info.maxVertexTextureImageUnits);
+
+        info.printInfo();
     }
 
     void RenderManager::ClearColor(Eigen::Vector4f c)
