@@ -27,9 +27,10 @@ namespace Application
 
         Graphics::StaticMesh::SP mArrowMesh;
         Graphics::StaticMesh::SP mCubeMesh;
+        Graphics::StaticMesh::SP mSphereMesh;
 
-        Graphics::Material::SP mMaterialGreen;
-        Graphics::Material::SP mMaterialRed;
+        Graphics::Material::SP mMaterialCopper;
+        Graphics::PBRMaterial::SP mMaterialBlock;
         Graphics::Material::SP mMaterialBlue;
 
         Graphics::Texture::SP mAlbedo;

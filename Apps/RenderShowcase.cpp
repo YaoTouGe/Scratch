@@ -24,51 +24,60 @@ namespace Application
         RenderManager::Instance()->SetCurrentPipeline(rp);
 
         mArrowMesh = GenArrowMesh(0.02, 0.04, 1, false);
-        mCubeMesh = GenCubeMesh(Eigen::Vector3f(1, 1, 1));
+        mCubeMesh = GenCubeMesh(Eigen::Vector3f(0.2, 0.2, 0.2));
+        mSphereMesh = GenSphereMesh(0.2);
 
         mAlbedo = RenderManager::Instance()->AllocTexture(TextureType_2D, TextureFormat_R8G8B8, true);
         mAlbedo->SetFilter(TextureFilter_LinearMipmapLinear, TextureFilter_Linear);
         mAlbedo->SetWrapMode(TextureWrapMode_Repeat, TextureWrapMode_Repeat);
-        mAlbedo->LoadFromFile("Resources/dull-copper_albedo.png");
+        mAlbedo->LoadFromFile("Resources/copper/dull-copper_albedo.png");
 
         mNormal = RenderManager::Instance()->AllocTexture(TextureType_2D, TextureFormat_R8G8B8A8, true);
         mNormal->SetFilter(TextureFilter_LinearMipmapLinear, TextureFilter_Linear);
         mNormal->SetWrapMode(TextureWrapMode_Repeat, TextureWrapMode_Repeat);
-        mNormal->LoadFromFile("Resources/dull-copper_normal-dx.png");
+        mNormal->LoadFromFile("Resources/copper/dull-copper_normal-dx.png");
 
         mMetallic = RenderManager::Instance()->AllocTexture(TextureType_2D, TextureFormat_R8G8B8, true);
         mMetallic->SetFilter(TextureFilter_LinearMipmapLinear, TextureFilter_Linear);
         mMetallic->SetWrapMode(TextureWrapMode_Repeat, TextureWrapMode_Repeat);
-        mMetallic->LoadFromFile("Resources/dull-copper_metallic.png");
+        mMetallic->LoadFromFile("Resources/copper/dull-copper_metallic.png");
 
         mAo = RenderManager::Instance()->AllocTexture(TextureType_2D, TextureFormat_R8G8B8A8, true);
         mAo->SetFilter(TextureFilter_LinearMipmapLinear, TextureFilter_Linear);
         mAo->SetWrapMode(TextureWrapMode_Repeat, TextureWrapMode_Repeat);
-        mAo->LoadFromFile("Resources/dull-copper_ao.png");
+        mAo->LoadFromFile("Resources/copper/dull-copper_ao.png");
 
         mRoughness = RenderManager::Instance()->AllocTexture(TextureType_2D, TextureFormat_R8G8B8, true);
         mRoughness->SetFilter(TextureFilter_LinearMipmapLinear, TextureFilter_Linear);
         mRoughness->SetWrapMode(TextureWrapMode_Repeat, TextureWrapMode_Repeat);
-        mRoughness->LoadFromFile("Resources/dull-copper_roughness.png");
+        mRoughness->LoadFromFile("Resources/copper/dull-copper_roughness.png");
 
         mShaderProgram = ShaderUtil::LoadProgramFromTinySL("Graphics/shaders/basic_pbr.tinysl");
-        mMaterialGreen = std::make_shared<Material>(mShaderProgram);
-        mMaterialRed = std::make_shared<Material>(mShaderProgram);
+        mMaterialCopper = std::make_shared<Material>(mShaderProgram);
+        mMaterialBlock = std::make_shared<PBRMaterial>(mShaderProgram);
         mMaterialBlue = std::make_shared<Material>(mShaderProgram);
 
-        mMaterialRed->SetValue("mainColor", Eigen::Vector4f(1, 1, 1, 1));
-        mMaterialRed->SetTexture("roughnessTex", mRoughness);
-        mMaterialRed->SetTexture("metallicTex", mMetallic);
-        mMaterialRed->SetTexture("albedoTex", mAlbedo);
-        mMaterialRed->SetTexture("aoTex", mAo);
-        mMaterialRed->SetTexture("normalTex", mNormal);
+        mMaterialBlock->SetValue("mainColor", Eigen::Vector4f(1, 1, 1, 1));
+        const char *texs[5] = {"Resources/cobble/dusty-cobble_albedo.png",
+                               "Resources/cobble/dusty-cobble_metallic.png",
+                               "Resources/cobble/dusty-cobble_roughness.png",
+                               "Resources/cobble/dusty-cobble_ao.png",
+                               "Resources/cobble/dusty-cobble_normal-ogl.png"};
+        TextureFormat formats[5] = {
+            TextureFormat_R8G8B8,
+            TextureFormat_R8G8B8,
+            TextureFormat_R8G8B8,
+            TextureFormat_R8G8B8,
+            TextureFormat_R8G8B8
+        };
+        mMaterialBlock->LoadTextures(texs, formats);
 
-        mMaterialGreen->SetValue("mainColor", Eigen::Vector4f(1, 1, 1, 1));
-        mMaterialGreen->SetTexture("roughnessTex", mRoughness);
-        mMaterialGreen->SetTexture("metallicTex", mMetallic);
-        mMaterialGreen->SetTexture("albedoTex", mAlbedo);
-        mMaterialGreen->SetTexture("aoTex", mAo);
-        mMaterialGreen->SetTexture("normalTex", mNormal);
+        mMaterialCopper->SetValue("mainColor", Eigen::Vector4f(1, 1, 1, 1));
+        mMaterialCopper->SetTexture("roughnessTex", mRoughness);
+        mMaterialCopper->SetTexture("metallicTex", mMetallic);
+        mMaterialCopper->SetTexture("albedoTex", mAlbedo);
+        mMaterialCopper->SetTexture("aoTex", mAo);
+        mMaterialCopper->SetTexture("normalTex", mNormal);
 
         mMaterialBlue->SetValue("mainColor", Eigen::Vector4f(1, 1, 1, 1));
         mMaterialBlue->SetTexture("roughnessTex", mRoughness);
@@ -90,6 +99,7 @@ namespace Application
     {
         auto rm = RenderManager::Instance();
         rm->Clear(ClearFlag_All);
+        // rm->EnableWireFrame(true);
 
         m_Camera->GetViewMatrix(mViewMat);
         m_Camera->GetProjectionMatrix(mProjectionMat);
@@ -112,7 +122,14 @@ namespace Application
         rm->CollectLight(l);
 
         DrawAxis(Eigen::Matrix4f::Identity());
-        rm->DrawMesh(mCubeMesh, mMaterialBlue, Eigen::Matrix4f::Identity());
+        Eigen::Affine3f transform;
+        transform.setIdentity();
+        transform.translation() = Eigen::Vector3f(0, 1, 0);
+        rm->DrawMesh(mCubeMesh, mMaterialBlock, transform.matrix());
+
+        transform.setIdentity();
+        transform.translation() = Eigen::Vector3f(1, 0, 0);
+        rm->DrawMesh(mSphereMesh, mMaterialBlock, transform.matrix());
         // rm->EnableWireFrame(true);
         rm->EndFrame();
     }
@@ -123,27 +140,27 @@ namespace Application
         // {
         // case GLFW_KEY_W:
         //     mMetallic += 0.05f;
-        //     mMaterialRed->SetValue("metallic", mMetallic);
-        //     mMaterialGreen->SetValue("metallic", mMetallic);
+        //     mMaterialBlock->SetValue("metallic", mMetallic);
+        //     mMaterialCopper->SetValue("metallic", mMetallic);
         //     mMaterialBlue->SetValue("metallic", mMetallic);
         //     break;
 
         // case GLFW_KEY_S:
         //     mMetallic -= 0.05f;
-        //     mMaterialRed->SetValue("metallic", mMetallic);
-        //     mMaterialGreen->SetValue("metallic", mMetallic);
+        //     mMaterialBlock->SetValue("metallic", mMetallic);
+        //     mMaterialCopper->SetValue("metallic", mMetallic);
         //     mMaterialBlue->SetValue("metallic", mMetallic);
         //     break;
         // case GLFW_KEY_A:
         //     mRoughness -= 0.05f;
-        //     mMaterialRed->SetValue("roughness", mRoughness);
-        //     mMaterialGreen->SetValue("roughness", mRoughness);
+        //     mMaterialBlock->SetValue("roughness", mRoughness);
+        //     mMaterialCopper->SetValue("roughness", mRoughness);
         //     mMaterialBlue->SetValue("roughness", mRoughness);
         //     break;
         // case GLFW_KEY_D:
         //     mRoughness += 0.05f;
-        //     mMaterialRed->SetValue("roughness", mRoughness);
-        //     mMaterialGreen->SetValue("roughness", mRoughness);
+        //     mMaterialBlock->SetValue("roughness", mRoughness);
+        //     mMaterialCopper->SetValue("roughness", mRoughness);
         //     mMaterialBlue->SetValue("roughness", mRoughness);
         //     break;
         // }
@@ -157,12 +174,12 @@ namespace Application
         local.setIdentity();
         local.linear() = rotation.toRotationMatrix();
 
-        rm->DrawMesh(mArrowMesh, mMaterialRed, transform * local.matrix());
-        rm->DrawMesh(mArrowMesh, mMaterialGreen, transform);
+        rm->DrawMesh(mArrowMesh, mMaterialCopper, transform * local.matrix());
+        rm->DrawMesh(mArrowMesh, mMaterialCopper, transform);
 
         rotation.axis() = Eigen::Vector3f(1, 0, 0);
         local.linear() = rotation.toRotationMatrix();
-        rm->DrawMesh(mArrowMesh, mMaterialBlue, transform * local.matrix());
+        rm->DrawMesh(mArrowMesh, mMaterialCopper, transform * local.matrix());
     }
 
     void RenderShowcase::MouseButton(int button, int action, int mods, int x, int y)

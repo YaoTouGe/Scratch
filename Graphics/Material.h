@@ -117,4 +117,18 @@ namespace Graphics
         std::unordered_map<std::string, int> mPerMaterialBlockOffset;
         std::unordered_map<int, uint32_t> mTextureBinds;
     };
+
+    class PBRMaterial: public Material
+    {
+    public:
+        typedef std::shared_ptr<PBRMaterial> SP;
+        PBRMaterial(ShaderProgram::SP shader): Material(shader) {}
+        ~PBRMaterial();
+
+        // "albedoTex","metallicTex", "roughnessTex", "aoTex", "normalTex
+        void LoadTextures(const char *texPaths[5], TextureFormat formats[5]);
+
+    private:
+        Texture::SP mTextures[5];
+    };
 }

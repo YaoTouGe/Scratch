@@ -1,3 +1,4 @@
+#include <iostream>
 #include "BasicMeshUtil.h"
 
 namespace Graphics
@@ -350,6 +351,121 @@ namespace Graphics
         ret->SetPositions(std::move(verts));
         ret->SetNormals(std::move(normals));
         ret->SetUvs(uv0, 0);
+        return ret;
+    }
+
+    StaticMesh::SP GenSphereMesh(float radius)
+    {
+        std::vector<Eigen::Vector3f> verts;
+        std::vector<Eigen::Vector3f> normals;
+        std::vector<Eigen::Vector3f> uv0;
+
+        int secTheta = 20;
+        int secPhi = 10;
+        float deltaPhi = PI / secPhi;
+        float deltaTheta = 2 * PI / secTheta;
+
+        float phi = -PI * 0.5;
+        float theta = 0;
+
+        std::vector<Eigen::Vector3f> prevRow;
+        std::vector<Eigen::Vector3f> currentRow;
+        std::vector<float> circleU;
+
+        for (int thetaIdx = 0; thetaIdx < secTheta; ++thetaIdx)
+        {
+            float sinT = sinf(theta);
+            circleU.push_back(sinT);
+            theta += deltaTheta;
+        }
+
+        float lastSinP = 0;
+        theta = 0;
+        for (int phiIdx = 0; phiIdx < secPhi + 1; ++phiIdx)
+        {
+            theta = 0;
+            if (phiIdx == secPhi)
+                phi = PI * 0.5;
+            float sinP = sinf(phi);
+            float cosP = cosf(phi);
+            for (int thetaIdx = 0; thetaIdx < secTheta; ++thetaIdx)
+            {
+                float cosT = cosf(theta);
+                float sinT = sinf(theta);
+
+                Eigen::Vector3f p = {radius * cosP * cosT, radius * sinP, radius * cosP * sinT};
+
+                currentRow.push_back(p);
+                theta += deltaTheta;
+            }
+
+            if (!prevRow.empty())
+            {
+                for (int i = 0; i < secTheta; ++i)
+                {
+                    int idx = i;
+                    int nextIdx = (idx + 1)%secTheta;
+
+                    verts.push_back(currentRow[idx]);
+                    normals.push_back(currentRow[idx].normalized());
+                    uv0.push_back(Eigen::Vector3f(circleU[idx], sinP * 0.5 + 0.5, 0));
+
+                    verts.push_back(currentRow[nextIdx]);
+                    normals.push_back(currentRow[nextIdx].normalized());
+                    uv0.push_back(Eigen::Vector3f(circleU[nextIdx], sinP * 0.5 + 0.5, 0));
+
+                    verts.push_back(prevRow[idx]);
+                    normals.push_back(prevRow[idx].normalized());
+                    uv0.push_back(Eigen::Vector3f(circleU[idx], lastSinP * 0.5 + 0.5, 0));
+
+                    verts.push_back(prevRow[idx]);
+                    normals.push_back(prevRow[idx].normalized());
+                    uv0.push_back(Eigen::Vector3f(circleU[idx], lastSinP * 0.5 + 0.5, 0));
+
+                    verts.push_back(currentRow[nextIdx]);
+                    normals.push_back(currentRow[nextIdx].normalized());
+                    uv0.push_back(Eigen::Vector3f(circleU[nextIdx], sinP * 0.5 + 0.5, 0));
+
+                    verts.push_back(prevRow[nextIdx]);
+                    normals.push_back(prevRow[nextIdx].normalized());
+                    uv0.push_back(Eigen::Vector3f(circleU[nextIdx], lastSinP * 0.5 + 0.5, 0));
+
+                    if (idx == secTheta - 1)
+                    {
+                        verts.push_back(currentRow[idx]);
+                        normals.push_back(currentRow[idx].normalized());
+                        uv0.push_back(Eigen::Vector3f(circleU[idx], sinP * 0.5 + 0.5, 0));
+                        verts.push_back(currentRow[nextIdx]);
+                        normals.push_back(currentRow[nextIdx].normalized());
+                        uv0.push_back(Eigen::Vector3f(circleU[nextIdx], sinP * 0.5 + 0.5, 0));
+                        verts.push_back(prevRow[idx]);
+                        normals.push_back(prevRow[idx].normalized());
+                        uv0.push_back(Eigen::Vector3f(circleU[idx], lastSinP * 0.5 + 0.5, 0));
+
+                        verts.push_back(prevRow[idx]);
+                        normals.push_back(prevRow[idx].normalized());
+                        uv0.push_back(Eigen::Vector3f(circleU[idx], lastSinP * 0.5 + 0.5, 0));
+                        verts.push_back(currentRow[nextIdx]);
+                        normals.push_back(currentRow[nextIdx].normalized());
+                        uv0.push_back(Eigen::Vector3f(circleU[nextIdx], sinP * 0.5 + 0.5, 0));
+                        verts.push_back(prevRow[nextIdx]);
+                        normals.push_back(prevRow[nextIdx].normalized());
+                        uv0.push_back(Eigen::Vector3f(circleU[nextIdx], lastSinP * 0.5 + 0.5, 0));
+                    }
+                }
+            }
+
+            prevRow.swap(currentRow);
+            currentRow.clear();
+            lastSinP = sinP;
+            phi += deltaPhi;
+        }
+
+        auto ret = std::make_shared<StaticMesh>();
+        ret->SetPositions(verts);
+        ret->SetUvs(uv0, 1);
+        ret->SetNormals(normals);
+
         return ret;
     }
 }
