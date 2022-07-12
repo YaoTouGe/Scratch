@@ -46,6 +46,8 @@ Vertex
     layout(location=5) in vec3 color0;
     layout(location=6) in vec3 color1;
     layout(location=7) in vec3 color2;
+    layout(location=8) in vec3 tangent;
+    layout(location=9) in vec3 bitangent;
 }
 
 Fragment

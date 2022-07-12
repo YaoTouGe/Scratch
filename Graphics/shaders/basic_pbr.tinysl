@@ -19,6 +19,8 @@ Share
         vec3 worldPos;
         vec3 worldNormal;
         vec2 uv0;
+        vec3 tangent;
+        vec3 bitangent;
     };
 
     uniform sampler2D albedoTex;
@@ -38,6 +40,8 @@ Vertex
         data.worldNormal = vec3(modelMatrix * vec4(normal, 0.0));
         data.worldPos = vec3(worldPos);
         data.uv0 = uv0.xy;
+        data.tangent = tangent;
+        data.bitangent = bitangent;
         gl_Position = viewProjectionMatrix * worldPos;
     }
 }
@@ -55,9 +59,10 @@ Fragment
         float ao = texture(aoTex, data.uv0).x;
         vec3 localNormal = texture(normalTex, data.uv0).xyz * 2 - 1;
 
+        mat3 TBN = {data.tangent, data.bitangent, data.worldNormal};
         // vec3 lightDir = normalize(lightData[0].lightPos - data.worldPos);
         vec3 viewDir = normalize(cameraPosition - data.worldPos);
-        vec3 normalDir = normalize(data.worldNormal);
+        vec3 normalDir = normalize(TBN * localNormal);
 
         float NdotV = max(dot(normalDir, viewDir), 0.0);
         float r = clamp(roughness, 0, 1);
@@ -90,6 +95,6 @@ Fragment
         
         // TODO: environment light
         FragColor = vec4(color * ao/*+ ambientColor.xyz * mainColor.xyz*/, 1);
-        // FragColor = vec4(-data.worldNormal, 1);
+        //FragColor = vec4(data.bitangent, 1);
     }
 }

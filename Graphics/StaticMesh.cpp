@@ -1,6 +1,8 @@
 #include "StaticMesh.h"
 #include "RenderManager.h"
 #include "GL/glew.h"
+#include <iostream>
+#include "Eigen/LU"
 
 namespace Graphics
 {
@@ -8,7 +10,8 @@ namespace Graphics
     {
         if (!mDirty)
             return;
-            
+
+        CalculateTBN();
         // TODO: dirty mark and only upload changed data.
         if (mVertexBuffer == nullptr)
             mVertexBuffer = RenderManager::Instance()->AllocBuffer(BufferType_VertexBuffer);
@@ -29,7 +32,7 @@ namespace Graphics
         mPreparedBuffer = malloc(mPreparedBufferSize);
 
         char* writeStart = (char*)mPreparedBuffer;
-        std::vector<Eigen::Vector3f> *attribs[] = {&mPositions, &mNormals, &mUvs[0], &mUvs[1], &mUvs[2], &mColors[0], &mColors[1], &mColors[2]};
+        std::vector<Eigen::Vector3f> *attribs[] = {&mPositions, &mNormals, &mUvs[0], &mUvs[1], &mUvs[2], &mColors[0], &mColors[1], &mColors[2], &mTangents, &mBiTangents};
 
         for (int i = 0, flag = 1; flag < LayoutName_Max; i++, flag <<= 1)
         {
@@ -77,8 +80,6 @@ namespace Graphics
         }
 
         glBindVertexArray(0);
-        mVertexCount = mPositions.size();
-        mIndexCount = mIndices.size();
         mDirty = false;
     }
 
@@ -87,7 +88,48 @@ namespace Graphics
         // triangles must not share vertex, and should contain nromal and uv attribs
         if ((mLayoutFlag & LayoutName_Normal) && (mLayoutFlag & LayoutName_UV0))
         {
+            for (int idx = 0; idx < mVertexCount; idx += 3)
+            {
+                auto &a = mPositions[idx];
+                auto &b = mPositions[idx + 1];
+                auto &c = mPositions[idx + 2];
 
+                Eigen::Vector2f aUV = mUvs[0][idx].segment(0, 2);
+                Eigen::Vector2f bUV = mUvs[0][idx + 1].segment(0, 2);
+                Eigen::Vector2f cUV = mUvs[0][idx + 2].segment(0, 2);
+
+                auto ab = b - a;
+                auto ac = c - a;
+
+                auto abUV = bUV - aUV;
+                auto acUV = cUV - aUV;
+
+                Eigen::Matrix<float, 3, 2> B;
+                B.col(0) = ab;
+                B.col(1) = ac;
+
+                Eigen::Matrix2f A;
+                A.col(0) = abUV;
+                A.col(1) = acUV;
+
+                Eigen::Matrix<float,2,2> inv;
+                inv << A(1,1),-A(0,1),-A(1,0),A(0,0);
+                inv /= (A(0,0)*A(1,1) - A(0,1)*A(1,0));
+                // std::cout << A.inverse() << std::endl;
+                // std::cout << inv << std::endl;
+
+                auto TB = B * inv;
+                mTangents.push_back(TB.col(0));
+                mTangents.push_back(TB.col(0));
+                mTangents.push_back(TB.col(0));
+
+                mBiTangents.push_back(TB.col(1));
+                mBiTangents.push_back(TB.col(1));
+                mBiTangents.push_back(TB.col(1));
+            }
+
+            mLayoutFlag |= LayoutName_Tangent;
+            mLayoutFlag |= LayoutName_Bitangent;
         }
     }
 

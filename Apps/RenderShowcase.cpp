@@ -102,7 +102,7 @@ namespace Application
         l.lightColor = Eigen::Vector3f(1, 1, 1);
         l.lightType = 0;
         l.lightPos = Eigen::Vector3f(1, 1, 1);
-        l.intensity = 2;
+        l.intensity = 1;
         rm->CollectLight(l);
         l.lightPos = Eigen::Vector3f(-1, 1, 1);
         rm->CollectLight(l);

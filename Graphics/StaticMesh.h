@@ -33,6 +33,7 @@ namespace Graphics
         {
             mPositions = positions;
             mLayoutFlag |= LayoutName_Position;
+            mVertexCount = mPositions.size();
             mDirty = true;
         }
 
@@ -40,6 +41,7 @@ namespace Graphics
         {
             mPositions.swap(positions);
             mLayoutFlag |= LayoutName_Position;
+            mVertexCount = mPositions.size();
             mDirty = true;
         }
 
@@ -98,6 +100,7 @@ namespace Graphics
             mIndices = indices;
             mHasIndex = true;
             mDirty = true;
+            mIndexCount = mIndices.size();
         }
 
         void SetIndices(std::vector<uint32_t>&& indices)
@@ -105,6 +108,7 @@ namespace Graphics
             mIndices.swap(indices);
             mHasIndex = true;
             mDirty = true;
+            mIndexCount = mIndices.size();
         }
 
         void Prepare() override;
@@ -117,6 +121,8 @@ namespace Graphics
 
         std::vector<Eigen::Vector3f> mPositions;
         std::vector<Eigen::Vector3f> mNormals;
+        std::vector<Eigen::Vector3f> mTangents;
+        std::vector<Eigen::Vector3f> mBiTangents;
         std::vector<Eigen::Vector3f> mUvs[3]; // 3d uv, may use only 2d in most case
         std::vector<Eigen::Vector3f> mColors[3];
 
