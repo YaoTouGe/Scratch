@@ -1,6 +1,8 @@
 #include "ShaderProgram.h"
+#include <iostream>
+#include <algorithm>
+
 #include "GL/glew.h"
-#include "iostream"
 #include "Constants.h"
 #include "InternalFunctions.h"
 
@@ -78,8 +80,31 @@ namespace Graphics
         
         mHaveBuilt = true;
 
-        // auto property = GetPropertyLayout();
+        auto property = GetPropertyLayout();
         // property->PrintLayoutInfos();
+        // set sampler uniforms after built, sort by texture name
+        mSamplerInfos.clear();
+        for (auto uniform: property->uniformInfos)
+        {
+            if (uniform.type >= ProgramDataType_SamplerStart
+                && uniform.type <= ProgramDataType_SamplerEnd)
+            {
+                mSamplerInfos.push_back(uniform);
+            }
+        }
+
+        std::sort(mSamplerInfos.begin(), mSamplerInfos.end(), 
+        [](ShaderProgramPropertyLayout::UniformInfo info1, ShaderProgramPropertyLayout::UniformInfo info2) -> int
+        {
+            return info1.name.compare(info2.name);
+        });
+
+        glUseProgram(mProgramHandle);
+        for(int i = 0; i < mSamplerInfos.size(); ++i)
+        {
+            glUniform1i(mSamplerInfos[i].location, i);
+        }
+        glUseProgram(0);
 
         return true;
     }

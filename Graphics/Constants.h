@@ -71,12 +71,14 @@ namespace Graphics
         ProgramDataType_Vec3,
         ProgramDataType_Vec4,
         ProgramDataType_Mat4,
-        ProgramDataType_Sampler1D,
+        ProgramDataType_SamplerStart,
+        ProgramDataType_Sampler1D = ProgramDataType_SamplerStart,
         ProgramDataType_Sampler2D,
         ProgramDataType_Sampler3D,
         ProgramDataType_SamplerCube,
         ProgramDataType_Sampler1DShadow,
-        ProgramDataType_Sampler2DShadow
+        ProgramDataType_Sampler2DShadow,
+        ProgramDataType_SamplerEnd = ProgramDataType_Sampler2DShadow
     };
 
     enum DepthStencilFunc

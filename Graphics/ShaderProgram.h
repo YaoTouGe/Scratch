@@ -114,6 +114,7 @@ namespace Graphics
         void SetStates(const RenderStates &states) { mStates = states;}
         const RenderStates &GetStates() { return mStates; }
 
+        const std::vector<ShaderProgramPropertyLayout::UniformInfo> &GetSamplerInfos() { return mSamplerInfos; }
     private:
 
         uint32_t mProgramHandle = -1;
@@ -142,6 +143,7 @@ namespace Graphics
         uint32_t mPerMaterialUniformBlockIdx = INVALID_ID;
         uint32_t mPerObjectUniformBlockIdx = INVALID_ID;
         ShaderProgramPropertyLayout::SP mPropertyLayout = nullptr;
+        std::vector<ShaderProgramPropertyLayout::UniformInfo> mSamplerInfos;
         RenderStates mStates;
     };
 }

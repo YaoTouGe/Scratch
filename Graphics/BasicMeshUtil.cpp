@@ -375,7 +375,7 @@ namespace Graphics
         for (int thetaIdx = 0; thetaIdx < secTheta; ++thetaIdx)
         {
             float sinT = sinf(theta);
-            circleU.push_back(sinT);
+            circleU.push_back(sinT * 0.5 + 0.5);
             theta += deltaTheta;
         }
 
@@ -463,7 +463,7 @@ namespace Graphics
 
         auto ret = std::make_shared<StaticMesh>();
         ret->SetPositions(verts);
-        ret->SetUvs(uv0, 1);
+        ret->SetUvs(uv0, 0);
         ret->SetNormals(normals);
 
         return ret;

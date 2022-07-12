@@ -81,14 +81,6 @@ namespace Graphics
                 break;
             }
         }
-
-        int texUnit = 0;
-        for (auto kv : mTextureBinds)
-        {
-            glUniform1i(kv.first, texUnit);
-            ++texUnit;
-        }
-
         mDirty = false;
     }
 
@@ -97,12 +89,15 @@ namespace Graphics
         mShader->UseProgram();
         RenderManager::Instance()->BindBufferBase(mMaterialUniformBuffer, PerMaterialUBOBindPoint);
 
-        int texUnit = 0;
-        for (auto kv : mTextureBinds)
+        auto samplerInfos = mShader->GetSamplerInfos();
+        for (int texUnit = 0; texUnit < samplerInfos.size(); ++texUnit)
         {
-            glActiveTexture(texUnit + GL_TEXTURE0);
-            glBindTexture(GL_TEXTURE_2D, kv.second);
-            ++texUnit;
+            auto iter = mTextureBinds.find(samplerInfos[texUnit].name);
+            if (iter != mTextureBinds.end())
+            {
+                glActiveTexture(texUnit + GL_TEXTURE0);
+                glBindTexture(GL_TEXTURE_2D, iter->second);
+            }
         }
     }
 

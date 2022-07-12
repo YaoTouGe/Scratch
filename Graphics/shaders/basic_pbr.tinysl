@@ -95,6 +95,6 @@ Fragment
         
         // TODO: environment light
         FragColor = vec4(color * ao/*+ ambientColor.xyz * mainColor.xyz*/, 1);
-        // FragColor = vec4(normalDir, 1);
+        // FragColor = vec4(data.uv0, 0, 1);
     }
 }

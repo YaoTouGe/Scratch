@@ -75,7 +75,7 @@ namespace Graphics
                 return;
             }
 
-            mTextureBinds.insert(std::make_pair(iter->second.location, tex->GetHandle()));
+            mTextureBinds.insert(std::make_pair(name, tex->GetHandle()));
             mDirty = true;
         }
 
@@ -115,7 +115,7 @@ namespace Graphics
 
         std::unordered_map<std::string, UniformCache> mUniformCaches;
         std::unordered_map<std::string, int> mPerMaterialBlockOffset;
-        std::unordered_map<int, uint32_t> mTextureBinds;
+        std::unordered_map<std::string, uint32_t> mTextureBinds;
     };
 
     class PBRMaterial: public Material
