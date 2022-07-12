@@ -23,7 +23,8 @@ namespace Application
         auto rp = std::make_shared<RenderPipeline>();
         RenderManager::Instance()->SetCurrentPipeline(rp);
 
-        mArrowMesh = GenArrowMesh(0.02, 0.04, 1);
+        mArrowMesh = GenArrowMesh(0.02, 0.04, 1, false);
+        mCubeMesh = GenCubeMesh(Eigen::Vector3f(1, 1, 1));
 
         mAlbedo = RenderManager::Instance()->AllocTexture(TextureType_2D, TextureFormat_R8G8B8, true);
         mAlbedo->SetFilter(TextureFilter_LinearMipmapLinear, TextureFilter_Linear);
@@ -50,26 +51,26 @@ namespace Application
         mRoughness->SetWrapMode(TextureWrapMode_Repeat, TextureWrapMode_Repeat);
         mRoughness->LoadFromFile("Resources/dull-copper_roughness.png");
 
-        mShaderProgram = ShaderUtil::LoadProgramFromTinySL("Graphics/shaders/axis_arrow.tinysl");
+        mShaderProgram = ShaderUtil::LoadProgramFromTinySL("Graphics/shaders/basic_pbr.tinysl");
         mMaterialGreen = std::make_shared<Material>(mShaderProgram);
         mMaterialRed = std::make_shared<Material>(mShaderProgram);
         mMaterialBlue = std::make_shared<Material>(mShaderProgram);
 
-        mMaterialRed->SetValue("mainColor", Eigen::Vector4f(1, 0, 0, 1));
+        mMaterialRed->SetValue("mainColor", Eigen::Vector4f(1, 1, 1, 1));
         mMaterialRed->SetTexture("roughnessTex", mRoughness);
         mMaterialRed->SetTexture("metallicTex", mMetallic);
         mMaterialRed->SetTexture("albedoTex", mAlbedo);
         mMaterialRed->SetTexture("aoTex", mAo);
         mMaterialRed->SetTexture("normalTex", mNormal);
 
-        mMaterialGreen->SetValue("mainColor", Eigen::Vector4f(0, 1, 0, 1));
+        mMaterialGreen->SetValue("mainColor", Eigen::Vector4f(1, 1, 1, 1));
         mMaterialGreen->SetTexture("roughnessTex", mRoughness);
         mMaterialGreen->SetTexture("metallicTex", mMetallic);
         mMaterialGreen->SetTexture("albedoTex", mAlbedo);
         mMaterialGreen->SetTexture("aoTex", mAo);
         mMaterialGreen->SetTexture("normalTex", mNormal);
 
-        mMaterialBlue->SetValue("mainColor", Eigen::Vector4f(0, 0, 1, 1));
+        mMaterialBlue->SetValue("mainColor", Eigen::Vector4f(1, 1, 1, 1));
         mMaterialBlue->SetTexture("roughnessTex", mRoughness);
         mMaterialBlue->SetTexture("metallicTex", mMetallic);
         mMaterialBlue->SetTexture("albedoTex", mAlbedo);
@@ -111,6 +112,7 @@ namespace Application
         rm->CollectLight(l);
 
         DrawAxis(Eigen::Matrix4f::Identity());
+        rm->DrawMesh(mCubeMesh, mMaterialBlue, Eigen::Matrix4f::Identity());
         // rm->EnableWireFrame(true);
         rm->EndFrame();
     }

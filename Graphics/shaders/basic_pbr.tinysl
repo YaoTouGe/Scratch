@@ -1,6 +1,12 @@
 #include "common.tinysl"
 #include "PBRCommon.tinysl"
 
+States
+{
+    Cull on
+    CullFace back
+}
+
 Share
 {
     PER_MATERIAL
@@ -84,5 +90,6 @@ Fragment
         
         // TODO: environment light
         FragColor = vec4(color * ao/*+ ambientColor.xyz * mainColor.xyz*/, 1);
+        // FragColor = vec4(-data.worldNormal, 1);
     }
 }

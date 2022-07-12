@@ -26,6 +26,8 @@ namespace Application
         void DrawAxis(const Eigen::Matrix4f &transform);
 
         Graphics::StaticMesh::SP mArrowMesh;
+        Graphics::StaticMesh::SP mCubeMesh;
+
         Graphics::Material::SP mMaterialGreen;
         Graphics::Material::SP mMaterialRed;
         Graphics::Material::SP mMaterialBlue;
