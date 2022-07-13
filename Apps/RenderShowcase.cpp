@@ -25,8 +25,8 @@ namespace Application
 
         mArrowMesh = GenArrowMesh(0.02, 0.04, 1, false);
         mCubeMesh = GenCubeMesh(Eigen::Vector3f(0.2, 0.2, 0.2));
-        // mSphereMesh = GenSphereMesh(0.2);
-        mSphereMesh = GenCubeMesh(Eigen::Vector3f(0.2, 0.2, 0.2));
+        mSphereMesh = GenSphereMesh(0.2, 50);
+        // mSphereMesh = GenCubeMesh(Eigen::Vector3f(0.2, 0.2, 0.2));
 
         mAlbedo = RenderManager::Instance()->AllocTexture(TextureType_2D, TextureFormat_R8G8B8, true);
         mAlbedo->SetFilter(TextureFilter_LinearMipmapLinear, TextureFilter_Linear);
@@ -136,8 +136,8 @@ namespace Application
         rm->DrawMesh(mCubeMesh, mMaterialBlackWhite, transform.matrix());
 
         transform.setIdentity();
-        transform.translation() = Eigen::Vector3f(0, 0, 0.2);
-        rm->DrawMesh(mSphereMesh, mMaterialCopper, transform.matrix());
+        transform.translation() = Eigen::Vector3f(0, 0, 0.5);
+        rm->DrawMesh(mSphereMesh, mMaterialBlackWhite, transform.matrix());
         // rm->EnableWireFrame(true);
         rm->EndFrame();
     }

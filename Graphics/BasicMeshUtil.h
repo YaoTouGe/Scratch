@@ -10,7 +10,7 @@ namespace Graphics
     StaticMesh::SP GenArrowMesh(float thickness, float arrowThickness, float length, bool shareVertex = true);
     // Cube centered at origin
     StaticMesh::SP GenCubeMesh(Eigen::Vector3f size);
-    StaticMesh::SP GenSphereMesh(float radius);
+    StaticMesh::SP GenSphereMesh(float radius, int section);
     StaticMesh::SP GenPlaneMesh();
     StaticMesh::SP GenTubeMesh();
 }

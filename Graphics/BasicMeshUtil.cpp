@@ -354,14 +354,14 @@ namespace Graphics
         return ret;
     }
 
-    StaticMesh::SP GenSphereMesh(float radius)
+    StaticMesh::SP GenSphereMesh(float radius, int section)
     {
         std::vector<Eigen::Vector3f> verts;
         std::vector<Eigen::Vector3f> normals;
         std::vector<Eigen::Vector3f> uv0;
 
-        int secTheta = 40;
-        int secPhi = 20;
+        int secPhi = section;
+        int secTheta = secPhi * 2;
         float deltaPhi = PI / secPhi;
         float deltaTheta = 2 * PI / secTheta;
 
@@ -374,16 +374,16 @@ namespace Graphics
 
         for (int thetaIdx = 0; thetaIdx < secTheta; ++thetaIdx)
         {
-            float sinT = sinf(theta);
-            circleU.push_back(sinT * 0.5 + 0.5);
-            theta += deltaTheta;
+            circleU.push_back((float)thetaIdx / secTheta * 2);
         }
+        circleU.push_back(2);
 
-        float lastSinP = 0;
+        float lastv = 0;
         theta = 0;
         for (int phiIdx = 0; phiIdx < secPhi + 1; ++phiIdx)
         {
             theta = 0;
+            float v = (float)phiIdx / secPhi;
             if (phiIdx == secPhi)
                 phi = PI * 0.5;
             float sinP = sinf(phi);
@@ -398,66 +398,44 @@ namespace Graphics
                 currentRow.push_back(p);
                 theta += deltaTheta;
             }
+            currentRow.push_back(currentRow[0]);
 
             if (!prevRow.empty())
             {
                 for (int i = 0; i < secTheta; ++i)
                 {
                     int idx = i;
-                    int nextIdx = (idx + 1)%secTheta;
+                    int nextIdx = idx + 1;
 
                     verts.push_back(currentRow[idx]);
                     normals.push_back(currentRow[idx].normalized());
-                    uv0.push_back(Eigen::Vector3f(circleU[idx], sinP * 0.5 + 0.5, 0));
+                    uv0.push_back(Eigen::Vector3f(circleU[idx], v, 0));
 
                     verts.push_back(currentRow[nextIdx]);
                     normals.push_back(currentRow[nextIdx].normalized());
-                    uv0.push_back(Eigen::Vector3f(circleU[nextIdx], sinP * 0.5 + 0.5, 0));
+                    uv0.push_back(Eigen::Vector3f(circleU[nextIdx], v, 0));
 
                     verts.push_back(prevRow[idx]);
                     normals.push_back(prevRow[idx].normalized());
-                    uv0.push_back(Eigen::Vector3f(circleU[idx], lastSinP * 0.5 + 0.5, 0));
+                    uv0.push_back(Eigen::Vector3f(circleU[idx], lastv, 0));
 
                     verts.push_back(prevRow[idx]);
                     normals.push_back(prevRow[idx].normalized());
-                    uv0.push_back(Eigen::Vector3f(circleU[idx], lastSinP * 0.5 + 0.5, 0));
+                    uv0.push_back(Eigen::Vector3f(circleU[idx], lastv, 0));
 
                     verts.push_back(currentRow[nextIdx]);
                     normals.push_back(currentRow[nextIdx].normalized());
-                    uv0.push_back(Eigen::Vector3f(circleU[nextIdx], sinP * 0.5 + 0.5, 0));
+                    uv0.push_back(Eigen::Vector3f(circleU[nextIdx], v, 0));
 
                     verts.push_back(prevRow[nextIdx]);
                     normals.push_back(prevRow[nextIdx].normalized());
-                    uv0.push_back(Eigen::Vector3f(circleU[nextIdx], lastSinP * 0.5 + 0.5, 0));
-
-                    if (idx == secTheta - 1)
-                    {
-                        verts.push_back(currentRow[idx]);
-                        normals.push_back(currentRow[idx].normalized());
-                        uv0.push_back(Eigen::Vector3f(circleU[idx], sinP * 0.5 + 0.5, 0));
-                        verts.push_back(currentRow[nextIdx]);
-                        normals.push_back(currentRow[nextIdx].normalized());
-                        uv0.push_back(Eigen::Vector3f(circleU[nextIdx], sinP * 0.5 + 0.5, 0));
-                        verts.push_back(prevRow[idx]);
-                        normals.push_back(prevRow[idx].normalized());
-                        uv0.push_back(Eigen::Vector3f(circleU[idx], lastSinP * 0.5 + 0.5, 0));
-
-                        verts.push_back(prevRow[idx]);
-                        normals.push_back(prevRow[idx].normalized());
-                        uv0.push_back(Eigen::Vector3f(circleU[idx], lastSinP * 0.5 + 0.5, 0));
-                        verts.push_back(currentRow[nextIdx]);
-                        normals.push_back(currentRow[nextIdx].normalized());
-                        uv0.push_back(Eigen::Vector3f(circleU[nextIdx], sinP * 0.5 + 0.5, 0));
-                        verts.push_back(prevRow[nextIdx]);
-                        normals.push_back(prevRow[nextIdx].normalized());
-                        uv0.push_back(Eigen::Vector3f(circleU[nextIdx], lastSinP * 0.5 + 0.5, 0));
-                    }
+                    uv0.push_back(Eigen::Vector3f(circleU[nextIdx], lastv, 0));
                 }
             }
 
             prevRow.swap(currentRow);
             currentRow.clear();
-            lastSinP = sinP;
+            lastv = v;
             phi += deltaPhi;
         }
 
