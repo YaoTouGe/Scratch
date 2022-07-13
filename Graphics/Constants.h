@@ -160,7 +160,8 @@ namespace Graphics
     enum TextureFormat
     {
         TextureFormat_R8G8B8A8 = 0,
-        TextureFormat_R8G8B8
+        TextureFormat_R8G8B8,
+        TextureFormat_R8G8,
     };
 
     enum TextureFilter
@@ -220,7 +221,7 @@ namespace Graphics
 
 #define GFX_LOG_ERROR(msg)                                                            \
     {                                                                                \
-        printf("%s%s(%d)\n%s%s\n", PRINT_FAIL, __FILE__, __LINE__, msg, PRINT_ENDC); \
+        printf("%s%s(%d): %s%s\n", PRINT_FAIL, __FILE__, __LINE__, msg, PRINT_ENDC); \
     }
 
 #define GFX_LOG_OK_FMT(msg_fmt, ...)         \
@@ -232,7 +233,7 @@ namespace Graphics
 
 #define GFX_LOG_ERROR_FMT(msg_fmt, ...)                       \
     {                                                        \
-        printf("%s%s(%d)\n", PRINT_FAIL, __FILE__, __LINE__);\
+        printf("%s%s(%d): ", PRINT_FAIL, __FILE__, __LINE__);\
         printf(msg_fmt, ##__VA_ARGS__);                      \
         printf("%s\n", PRINT_ENDC);                          \
     }

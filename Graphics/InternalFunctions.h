@@ -84,6 +84,11 @@ namespace Graphics
             *nativeType = GL_UNSIGNED_BYTE;
             *channel = 4;
             break;
+        case TextureFormat_R8G8:
+            *nativeFormat = GL_RG;
+            *nativeType = GL_UNSIGNED_BYTE;
+            *channel = 2;
+            break;
         default:
             GFX_LOG_ERROR("Unsupported format!!");
             *channel = 0;

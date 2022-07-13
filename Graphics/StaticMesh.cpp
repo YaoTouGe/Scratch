@@ -141,8 +141,6 @@ namespace Graphics
     StaticMesh::~StaticMesh()
     {
         free(mPreparedBuffer);
-        RenderManager::Instance()->ReleaseBuffer(mVertexBuffer);
-        RenderManager::Instance()->ReleaseBuffer(mIndexBuffer);
         glDeleteVertexArrays(1, &mVAOHandle);
     }
 }

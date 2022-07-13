@@ -29,9 +29,9 @@ namespace Application
         Graphics::StaticMesh::SP mCubeMesh;
         Graphics::StaticMesh::SP mSphereMesh;
 
-        Graphics::Material::SP mMaterialCopper;
-        Graphics::PBRMaterial::SP mMaterialBlock;
-        Graphics::Material::SP mMaterialBlue;
+        Graphics::BasicPBRMaterial::SP mMaterialCopper;
+        Graphics::BasicPBRMaterial::SP mMaterialBlock;
+        Graphics::BasicPBRMaterial::SP mMaterialBlackWhite;
 
         Graphics::Texture::SP mAlbedo;
         Graphics::Texture::SP mNormal;
@@ -45,6 +45,10 @@ namespace Application
         Eigen::Matrix4f mProjectionMat;
 
         Graphics::Camera *m_Camera;
+
+        float mMetallicScale = 1;
+        float mAOScale = 1;
+        float mRoughnessScale = 1;
     };
 }
 

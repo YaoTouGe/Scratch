@@ -17,18 +17,25 @@ namespace Graphics
     {
     public:
         typedef std::shared_ptr<Texture> SP;
+        typedef std::shared_ptr<const Texture> CSP;
+
         Texture(uint32_t handle, TextureType type, TextureFormat format, bool generateMipmap):
             mHandle(handle), mType(type), mFormat(format), mGenerateMipmap(generateMipmap){}
-        ~Texture() { free(mData); }
+        ~Texture();
 
         void SetWrapMode(TextureWrapMode S, TextureWrapMode T);
         void SetFilter(TextureFilter min, TextureFilter mag);
 
-        void TexData(int width, int height, int nchannel, void *data, int level);
+        bool TexData(int width, int height, int nchannel, void *data, int level);
         void LoadFromFile(const char *filePath);
         void BindTexture();
 
-        uint32_t GetHandle() { return mHandle; }
+        inline uint32_t GetHandle() const { return mHandle; }
+        inline void Reset() { mHandle = 0; }
+
+        static Texture::CSP GetWhiteTexture();
+        static Texture::CSP GetBlackTexture();
+        static Texture::CSP GetMagentaTexture();
 
     private:
         uint32_t mHandle;
@@ -36,5 +43,9 @@ namespace Graphics
         TextureFormat mFormat;
         void *mData = nullptr;
         bool mGenerateMipmap;
+
+        static Texture::SP mWhiteTexture;
+        static Texture::SP mBlackTexture;
+        static Texture::SP mMagentaTexture;
     };
 }

@@ -3,6 +3,7 @@
 #include "stdlib.h"
 #include "memory.h"
 #include "InternalFunctions.h"
+#include "RenderManager.h"
 
 namespace Graphics
 {
@@ -34,5 +35,11 @@ namespace Graphics
     void Buffer::Bind() const
     {
         glBindBuffer(GetNativeBufferType(mBufferType), mBufferHandle);
+    }
+
+    Buffer::~Buffer()
+    {
+        free(mData);
+        RenderManager::Instance()->ReleaseBuffer(this);
     }
 }

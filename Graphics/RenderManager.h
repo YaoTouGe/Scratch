@@ -32,9 +32,9 @@ namespace Graphics
         RenderTexture::SP AllocRenderTexture(TextureFormat format);
         ShaderProgram::SP AllocShaderProgram();
 
-        void ReleaseBuffer(Buffer::SP buffer);
-        void ReleaseTexture(Texture::SP tex);
-        void ReleaseShaderProgram(ShaderProgram::SP shaderProgram);
+        void ReleaseBuffer(Buffer *buffer);
+        void ReleaseTexture(Texture *tex);
+        void ReleaseShaderProgram(ShaderProgram *shaderProgram);
 
         void SetCurrentRenderTexture(RenderTexture::SP rt) {}
         RenderTexture::SP GetCurrentRenderTexture() { return mRenderTexture; }

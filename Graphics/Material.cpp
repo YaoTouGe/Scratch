@@ -38,7 +38,6 @@ namespace Graphics
 
     Material::~Material()
     {
-        RenderManager::Instance()->ReleaseBuffer(mMaterialUniformBuffer);
         free(mPerMaterialBuffer);
         for(auto p : mUniformCaches)
         {
@@ -106,24 +105,35 @@ namespace Graphics
         RenderManager::Instance()->SetRenderStates(mShader->GetStates());
     }
 
-    PBRMaterial::~PBRMaterial()
+    BasicPBRMaterial::BasicPBRMaterial(ShaderProgram::SP shader) : Material(shader)
+    {
+        SetRoughnessScale(1);
+        SetMetallicScale(1);
+        SetAOScale(1);
+    }
+
+    BasicPBRMaterial::~BasicPBRMaterial()
     {
     }
 
-    void PBRMaterial::LoadTextures(const char *texPaths[5], TextureFormat formats[5])
+    void BasicPBRMaterial::LoadTextures(const char *texPaths[5], TextureFormat formats[5])
     {
         const char *texNames[5] = {"albedoTex","metallicTex", "roughnessTex", "aoTex", "normalTex"};
         for (int i = 0; i < 5; ++i)
         {
             if (texPaths[i] == nullptr)
-                continue;
-            auto tex = RenderManager::Instance()->AllocTexture(TextureType_2D, formats[i], true);
-            tex->SetFilter(TextureFilter_LinearMipmapLinear, TextureFilter_Linear);
-            tex->SetWrapMode(TextureWrapMode_Repeat, TextureWrapMode_Repeat);
-            tex->LoadFromFile(texPaths[i]);
-            mTextures[i] = tex;
-
-            SetTexture(texNames[i], tex);
+            {
+                mTextures[i] = Texture::GetWhiteTexture();
+            }
+            else
+            {
+                auto tex = RenderManager::Instance()->AllocTexture(TextureType_2D, formats[i], true);
+                tex->SetFilter(TextureFilter_LinearMipmapLinear, TextureFilter_Linear);
+                tex->SetWrapMode(TextureWrapMode_Repeat, TextureWrapMode_Repeat);
+                tex->LoadFromFile(texPaths[i]);
+                mTextures[i] = tex;
+            }
+            SetTexture(texNames[i], mTextures[i]);
         }
     }
 }

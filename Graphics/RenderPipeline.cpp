@@ -11,7 +11,6 @@ namespace Graphics
 
     RenderPipeline::~RenderPipeline()
     {
-        RenderManager::Instance()->ReleaseBuffer(mGlobalUniformBuffer);
     }
 
     void RenderPipeline::AddRenderPass(RenderPass::SP renderPass)
@@ -68,8 +67,6 @@ namespace Graphics
             else
                 rm->DrawArrays(DrawType_Triangles, 0, ro.vertexSource->VertexCount());
         }
-
-        rm->ReleaseBuffer(perObjectUbo);
 
         clear();
     }

@@ -100,9 +100,11 @@ namespace Graphics
         typedef std::shared_ptr<ShaderProgram> SP;
 
         ShaderProgram(uint32_t programHandle) { mProgramHandle = programHandle; }
-        ~ShaderProgram() {}
+        ~ShaderProgram();
 
-        uint32_t GetProgramHandle() const { return mProgramHandle; }
+        inline uint32_t GetProgramHandle() const { return mProgramHandle; }
+        inline void Reset() { mProgramHandle = 0; }
+        
         void SetVertexShaderSource(const char* src);
         void SetFragmentShaderSource(const char *src);
 

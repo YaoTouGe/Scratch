@@ -12,6 +12,9 @@ Share
     PER_MATERIAL
     {
         vec4 mainColor;
+        float roughnessScale;
+        float metallicScale;
+        float aoScale;
     };
 
     struct AppData
@@ -55,8 +58,8 @@ Fragment
     {
         vec3 albedo = texture(albedoTex, data.uv0).xyz * mainColor.xyz;
         float roughness = texture(roughnessTex, data.uv0).x;
-        float metallic = texture(metallicTex, data.uv0).x;
-        float ao = texture(aoTex, data.uv0).x;
+        float metallic = texture(metallicTex, data.uv0).x * metallicScale;
+        float ao = texture(aoTex, data.uv0).x * aoScale;
         vec3 localNormal = texture(normalTex, data.uv0).xyz * 2 - 1;
 
         mat3 TBN = {data.tangent, data.bitangent, data.worldNormal};
@@ -65,8 +68,8 @@ Fragment
         vec3 normalDir = normalize(TBN * localNormal);
 
         float NdotV = max(dot(normalDir, viewDir), 0.0);
-        float r = clamp(roughness, 0, 1);
-        r = r * r;
+        float r = roughness * roughness * roughnessScale;
+        r = clamp(r, 0.1, 1.0);
 
         float m = clamp(metallic, 0, 1);
         // direct lighting
@@ -95,6 +98,6 @@ Fragment
         
         // TODO: environment light
         FragColor = vec4(color * ao/*+ ambientColor.xyz * mainColor.xyz*/, 1);
-        // FragColor = vec4(data.uv0, 0, 1);
+        // FragColor = vec4(normalDir * 0.5 + 0.5, 1);
     }
 }

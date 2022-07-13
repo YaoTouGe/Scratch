@@ -5,6 +5,7 @@
 #include "GL/glew.h"
 #include "Constants.h"
 #include "InternalFunctions.h"
+#include "RenderManager.h"
 
 namespace Graphics
 {
@@ -52,6 +53,7 @@ namespace Graphics
             if (mStageFlag & flag)
             {
                 glDetachShader(mProgramHandle, mStageHandles.handles[i]);
+                glDeleteShader(mStageHandles.handles[i]);
             }
         }
 
@@ -113,6 +115,11 @@ namespace Graphics
     {
         BuildProgram();
         glUseProgram(mProgramHandle);
+    }
+
+    ShaderProgram::~ShaderProgram()
+    {
+        RenderManager::Instance()->ReleaseShaderProgram(this);
     }
 
     ShaderProgramPropertyLayout::SP ShaderProgram::GetPropertyLayout()

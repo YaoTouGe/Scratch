@@ -18,10 +18,11 @@ namespace Graphics
     public:
         typedef std::shared_ptr<Buffer> SP;
         Buffer(uint32_t handle, BufferType type) : mBufferHandle(handle), mBufferType(type), mData(nullptr) {}
-        ~Buffer() { free(mData); }
+        ~Buffer();
 
         inline BufferType GetBufferType() const { return mBufferType; }
         inline uint32_t GetBufferHandle() const { return mBufferHandle; }
+        inline void Reset() { mBufferHandle = 0; }
 
         void BufferData(void *data, size_t size, BufferUsage usage);
         void BufferSubData(void *data, size_t offset, size_t size);

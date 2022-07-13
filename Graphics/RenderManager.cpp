@@ -31,34 +31,37 @@ namespace Graphics
         return std::make_shared<Texture>(texHandle, type, format, generateMipmap);
     }
 
-    void RenderManager::ReleaseTexture(Texture::SP tex)
-    {
-        if (tex == nullptr)
-            return;
-        auto handle = tex->GetHandle();
-        glDeleteTextures(1, &handle);
-    }
-
-    void RenderManager::ReleaseBuffer(Buffer::SP buffer)
-    {
-        if (buffer == nullptr)
-            return;
-
-        auto handle = buffer->GetBufferHandle();
-        glDeleteBuffers(1, &handle);
-    }
-
     ShaderProgram::SP RenderManager::AllocShaderProgram()
     {
         GLuint programHandle = glCreateProgram();
         return std::make_shared<ShaderProgram>(programHandle);
     }
 
-    void RenderManager::ReleaseShaderProgram(ShaderProgram::SP shaderProgram)
+    void RenderManager::ReleaseTexture(Texture *tex)
+    {
+        if (tex == nullptr)
+            return;
+        auto handle = tex->GetHandle();
+        glDeleteTextures(1, &handle);
+        tex->Reset();
+    }
+
+    void RenderManager::ReleaseBuffer(Buffer *buffer)
+    {
+        if (buffer == nullptr)
+            return;
+
+        auto handle = buffer->GetBufferHandle();
+        glDeleteBuffers(1, &handle);
+        buffer->Reset();
+    }
+
+    void RenderManager::ReleaseShaderProgram(ShaderProgram *shaderProgram)
     {
         if (shaderProgram == nullptr)
             return;
         glDeleteProgram(shaderProgram->GetProgramHandle());
+        shaderProgram->Reset();
     }
 
     void RenderManager::BindBufferRange(Buffer::SP buffer, uint32_t bindPoint, uint32_t offset, uint32_t size)

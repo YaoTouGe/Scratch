@@ -25,7 +25,8 @@ namespace Application
 
         mArrowMesh = GenArrowMesh(0.02, 0.04, 1, false);
         mCubeMesh = GenCubeMesh(Eigen::Vector3f(0.2, 0.2, 0.2));
-        mSphereMesh = GenSphereMesh(0.2);
+        // mSphereMesh = GenSphereMesh(0.2);
+        mSphereMesh = GenCubeMesh(Eigen::Vector3f(0.2, 0.2, 0.2));
 
         mAlbedo = RenderManager::Instance()->AllocTexture(TextureType_2D, TextureFormat_R8G8B8, true);
         mAlbedo->SetFilter(TextureFilter_LinearMipmapLinear, TextureFilter_Linear);
@@ -53,9 +54,9 @@ namespace Application
         mRoughness->LoadFromFile("Resources/copper/dull-copper_roughness.png");
 
         mShaderProgram = ShaderUtil::LoadProgramFromTinySL("Graphics/shaders/basic_pbr.tinysl");
-        mMaterialCopper = std::make_shared<Material>(mShaderProgram);
-        mMaterialBlock = std::make_shared<PBRMaterial>(mShaderProgram);
-        mMaterialBlue = std::make_shared<Material>(mShaderProgram);
+        mMaterialCopper = std::make_shared<BasicPBRMaterial>(mShaderProgram);
+        mMaterialBlock = std::make_shared<BasicPBRMaterial>(mShaderProgram);
+        mMaterialBlackWhite = std::make_shared<BasicPBRMaterial>(mShaderProgram);
 
         mMaterialBlock->SetValue("mainColor", Eigen::Vector4f(1, 1, 1, 1));
         const char *texs[5] = {"Resources/cobble/dusty-cobble_albedo.png",
@@ -79,20 +80,27 @@ namespace Application
         mMaterialCopper->SetTexture("aoTex", mAo);
         mMaterialCopper->SetTexture("normalTex", mNormal);
 
-        mMaterialBlue->SetValue("mainColor", Eigen::Vector4f(1, 1, 1, 1));
-        mMaterialBlue->SetTexture("roughnessTex", mRoughness);
-        mMaterialBlue->SetTexture("metallicTex", mMetallic);
-        mMaterialBlue->SetTexture("albedoTex", mAlbedo);
-        mMaterialBlue->SetTexture("aoTex", mAo);
-        mMaterialBlue->SetTexture("normalTex", mNormal);
+        mMaterialBlackWhite->SetValue("mainColor", Eigen::Vector4f(1, 1, 1, 1));
+        const char *blackWhiteTexs[5] = {
+            "Resources/black_white/black-white-tile_albedo.png",
+            "Resources/black_white/black-white-tile_metallic.png",
+            nullptr,
+            "Resources/black_white/black-white-tile_ao.png",
+            "Resources/black_white/black-white-tile_normal-ogl.png"};
+
+        TextureFormat blackWhiteFormats[5] = {
+            TextureFormat_R8G8B8A8,
+            TextureFormat_R8G8,
+            TextureFormat_R8G8B8,
+            TextureFormat_R8G8B8,
+            TextureFormat_R8G8B8};
+        mMaterialBlackWhite->LoadTextures(blackWhiteTexs, blackWhiteFormats);
         return 0;
     }
 
     void RenderShowcase::Finalize()
     {
         WindowApplication::Finalize();
-        RenderManager::Instance()->ReleaseShaderProgram(mShaderProgram);
-        RenderManager::Instance()->ReleaseTexture(mAlbedo);
     }
 
     void RenderShowcase::Render()
@@ -124,46 +132,46 @@ namespace Application
         DrawAxis(Eigen::Matrix4f::Identity());
         Eigen::Affine3f transform;
         transform.setIdentity();
-        transform.translation() = Eigen::Vector3f(0, 1, 0);
-        rm->DrawMesh(mCubeMesh, mMaterialBlock, transform.matrix());
+        // transform.translation() = Eigen::Vector3f(0, 1, 0);
+        rm->DrawMesh(mCubeMesh, mMaterialBlackWhite, transform.matrix());
 
         transform.setIdentity();
-        transform.translation() = Eigen::Vector3f(1, 0, 0);
-        rm->DrawMesh(mSphereMesh, mMaterialBlock, transform.matrix());
+        transform.translation() = Eigen::Vector3f(0, 0, 0.2);
+        rm->DrawMesh(mSphereMesh, mMaterialCopper, transform.matrix());
         // rm->EnableWireFrame(true);
         rm->EndFrame();
     }
 
     void RenderShowcase::KeyBoard(int key, int action)
     {
-        // switch (key)
-        // {
-        // case GLFW_KEY_W:
-        //     mMetallic += 0.05f;
-        //     mMaterialBlock->SetValue("metallic", mMetallic);
-        //     mMaterialCopper->SetValue("metallic", mMetallic);
-        //     mMaterialBlue->SetValue("metallic", mMetallic);
-        //     break;
+        switch (key)
+        {
+        case GLFW_KEY_W:
+            mMetallicScale += 0.05f;
+            mMaterialBlock->SetMetallicScale(mMetallicScale);
+            mMaterialCopper->SetMetallicScale(mMetallicScale);
+            mMaterialBlackWhite->SetMetallicScale(mMetallicScale);
+            break;
 
-        // case GLFW_KEY_S:
-        //     mMetallic -= 0.05f;
-        //     mMaterialBlock->SetValue("metallic", mMetallic);
-        //     mMaterialCopper->SetValue("metallic", mMetallic);
-        //     mMaterialBlue->SetValue("metallic", mMetallic);
-        //     break;
-        // case GLFW_KEY_A:
-        //     mRoughness -= 0.05f;
-        //     mMaterialBlock->SetValue("roughness", mRoughness);
-        //     mMaterialCopper->SetValue("roughness", mRoughness);
-        //     mMaterialBlue->SetValue("roughness", mRoughness);
-        //     break;
-        // case GLFW_KEY_D:
-        //     mRoughness += 0.05f;
-        //     mMaterialBlock->SetValue("roughness", mRoughness);
-        //     mMaterialCopper->SetValue("roughness", mRoughness);
-        //     mMaterialBlue->SetValue("roughness", mRoughness);
-        //     break;
-        // }
+        case GLFW_KEY_S:
+            mMetallicScale -= 0.05f;
+            mMaterialBlock->SetMetallicScale(mMetallicScale);
+            mMaterialCopper->SetMetallicScale(mMetallicScale);
+            mMaterialBlackWhite->SetMetallicScale(mMetallicScale);
+            break;
+        case GLFW_KEY_A:
+            mRoughnessScale -= 0.05f;
+            mMaterialBlock->SetRoughnessScale(mRoughnessScale);
+            mMaterialCopper->SetRoughnessScale(mRoughnessScale);
+            mMaterialBlackWhite->SetRoughnessScale(mRoughnessScale);
+            break;
+        case GLFW_KEY_D:
+            mRoughnessScale += 0.05f;
+            mMaterialBlock->SetRoughnessScale(mRoughnessScale);
+            mMaterialCopper->SetRoughnessScale(mRoughnessScale);
+            mMaterialBlackWhite->SetRoughnessScale(mRoughnessScale);
+            break;
+        }
     }
 
     void RenderShowcase::DrawAxis(const Eigen::Matrix4f &transform)

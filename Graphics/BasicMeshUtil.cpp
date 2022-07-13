@@ -196,9 +196,9 @@ namespace Graphics
 
                 if (i > 2)
                 {
-                    verts.push_back(verts[0]);
-                    normals.push_back(normals[0]);
-                    uv.push_back(uv[0]);
+                    verts.push_back(verts[indicesOffset]);
+                    normals.push_back(normals[indicesOffset]);
+                    uv.push_back(uv[indicesOffset]);
 
                     verts.push_back(verts[verts.size() - 2]);
                     normals.push_back(normals[normals.size() - 2]);
@@ -210,17 +210,17 @@ namespace Graphics
 
                 if (i == sec - 1)
                 {
-                    verts.push_back(verts[0]);
-                    normals.push_back(normals[0]);
-                    uv.push_back(uv[0]);
+                    verts.push_back(verts[indicesOffset]);
+                    normals.push_back(normals[indicesOffset]);
+                    uv.push_back(uv[indicesOffset]);
 
                     verts.push_back(verts[verts.size() - 2]);
                     normals.push_back(normals[normals.size() - 2]);
                     uv.push_back(uv[uv.size() - 2]);
 
-                    verts.push_back(verts[0]);
-                    normals.push_back(normals[0]);
-                    uv.push_back(uv[0]);
+                    verts.push_back(verts[indicesOffset]);
+                    normals.push_back(normals[indicesOffset]);
+                    uv.push_back(uv[indicesOffset]);
                 }
             }
         }
@@ -236,9 +236,9 @@ namespace Graphics
 
                 if (i > 2)
                 {
-                    verts.push_back(verts[0]);
-                    normals.push_back(normals[0]);
-                    uv.push_back(uv[0]);
+                    verts.push_back(verts[indicesOffset]);
+                    normals.push_back(normals[indicesOffset]);
+                    uv.push_back(uv[indicesOffset]);
 
                     verts.push_back(verts[verts.size() - 2]);
                     normals.push_back(normals[normals.size() - 2]);
@@ -251,17 +251,17 @@ namespace Graphics
 
                 if (i == sec - 1)
                 {
-                    verts.push_back(verts[0]);
-                    normals.push_back(normals[0]);
-                    uv.push_back(uv[0]);
+                    verts.push_back(verts[indicesOffset]);
+                    normals.push_back(normals[indicesOffset]);
+                    uv.push_back(uv[indicesOffset]);
 
                     verts.push_back(verts[verts.size() - 2]);
                     normals.push_back(normals[normals.size() - 2]);
                     uv.push_back(uv[uv.size() - 2]);
 
-                    verts.push_back(verts[0]);
-                    normals.push_back(normals[0]);
-                    uv.push_back(uv[0]);
+                    verts.push_back(verts[indicesOffset]);
+                    normals.push_back(normals[indicesOffset]);
+                    uv.push_back(uv[indicesOffset]);
                 }
             }
         }
@@ -320,9 +320,9 @@ namespace Graphics
             0, 2, 1, 1, 2, 3};
         Eigen::Vector3f uvs[6] = {
             {0, 0, 0},
-            {1, 1, 0},
+            {1, 0, 0},
             {0, 1, 0},
-            {0, 0, 0},
+            {0, 1, 0},
             {1, 0, 0},
             {1, 1, 0}};
 
@@ -360,8 +360,8 @@ namespace Graphics
         std::vector<Eigen::Vector3f> normals;
         std::vector<Eigen::Vector3f> uv0;
 
-        int secTheta = 20;
-        int secPhi = 10;
+        int secTheta = 40;
+        int secPhi = 20;
         float deltaPhi = PI / secPhi;
         float deltaTheta = 2 * PI / secTheta;
 

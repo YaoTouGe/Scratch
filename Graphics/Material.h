@@ -66,7 +66,7 @@ namespace Graphics
             }
         }
 
-        void SetTexture(const std::string &name, Texture::SP tex)
+        void SetTexture(const std::string &name, Texture::CSP tex)
         {
             auto iter = mUniformCaches.find(name);
             if (iter == mUniformCaches.end())
@@ -118,17 +118,21 @@ namespace Graphics
         std::unordered_map<std::string, uint32_t> mTextureBinds;
     };
 
-    class PBRMaterial: public Material
+    class BasicPBRMaterial: public Material
     {
     public:
-        typedef std::shared_ptr<PBRMaterial> SP;
-        PBRMaterial(ShaderProgram::SP shader): Material(shader) {}
-        ~PBRMaterial();
+        typedef std::shared_ptr<BasicPBRMaterial> SP;
+        BasicPBRMaterial(ShaderProgram::SP shader);
+        ~BasicPBRMaterial();
+
+        void SetRoughnessScale(float scale) { SetValue("roughnessScale", scale); }
+        void SetMetallicScale(float scale) { SetValue("metallicScale", scale); }
+        void SetAOScale(float scale) { SetValue("aoScale", scale); }
 
         // "albedoTex","metallicTex", "roughnessTex", "aoTex", "normalTex
         void LoadTextures(const char *texPaths[5], TextureFormat formats[5]);
 
     private:
-        Texture::SP mTextures[5];
+        Texture::CSP mTextures[5];
     };
 }
