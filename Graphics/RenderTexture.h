@@ -9,14 +9,28 @@
 #pragma once
 
 #include <memory>
+#include "Texture.h"
 
 namespace Graphics
 {
+    // Actually a frame buffer object
     class RenderTexture
     {
     public:
         typedef std::shared_ptr<RenderTexture>  SP;
+        RenderTexture(TextureFormat format);
+        void SetUseDepthBuffer(bool useTexture, TextureFormat format);
+        void SetUseStencilBuffer();
 
-        uint32_t GetHandle();
+        // index is a MRT index
+        Texture::SP GetColorTexture(int index);
+        void SetColorTextureCount(int count);
+
+        void GetDepthTexture();
+        void MakeCurrent();
+
+    private:
+        Texture::SP mColorTextures[8];
+        int mColorTexCount;
     };
 }
