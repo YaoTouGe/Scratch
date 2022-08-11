@@ -9,14 +9,14 @@ namespace Graphics
                            std::vector<Eigen::Vector3f> &uv, float bottomRadius, float upRadius, float length, float start)
     {
         const int sec = 16;
-        const float angleDelta = 2 * M_PI / sec;
+        const float angleDelta = 2 * PI_F / sec;
         float angle = 0;
         float deltaRadius = bottomRadius - upRadius;
         float slopeLen = sqrtf(deltaRadius * deltaRadius + length * length);
         float sinSlope = deltaRadius / slopeLen;
         float cosSlope = length / slopeLen;
 
-        size_t indicesOffset = verts.size();
+        uint32_t indicesOffset = (uint32_t)verts.size();
         for (int i = 0; i < sec; ++i)
         {
             Eigen::Vector3f bottom;
@@ -63,7 +63,7 @@ namespace Graphics
 
         if (bottomRadius != 0)
         {
-            indicesOffset = verts.size();
+            indicesOffset = (uint32_t)verts.size();
             angle = 0;
             for (int i = 0; i < sec; ++i, angle += angleDelta)
             {
@@ -72,7 +72,7 @@ namespace Graphics
 
                 verts.push_back(Eigen::Vector3f(sinAngle * bottomRadius, start, cosAngle * bottomRadius));
                 normals.push_back(Eigen::Vector3f(0, -1, 0));
-                uv.push_back(Eigen::Vector3f(cosAngle * 0.5 + 0.5, sinAngle * 0.5 + 0.5, 0));
+                uv.push_back(Eigen::Vector3f(cosAngle * 0.5f + 0.5f, sinAngle * 0.5f + 0.5f, 0));
             }
 
             for (int i = 1; i < sec - 1; ++i)
@@ -86,7 +86,7 @@ namespace Graphics
         if (upRadius != 0)
         {
             angle = 0;
-            indicesOffset = verts.size();
+            indicesOffset = (uint32_t)verts.size();
             for (int i = 0; i < sec; ++i, angle += angleDelta)
             {
                 float sinAngle = sin(angle);
@@ -94,7 +94,7 @@ namespace Graphics
 
                 verts.push_back(Eigen::Vector3f(sinAngle * upRadius, start + length, cosAngle * upRadius));
                 normals.push_back(Eigen::Vector3f(0, 1, 0));
-                uv.push_back(Eigen::Vector3f(cosAngle * 0.5 + 0.5, sinAngle * 0.5 + 0.5, 0));
+                uv.push_back(Eigen::Vector3f(cosAngle * 0.5f + 0.5f, sinAngle * 0.5f + 0.5f, 0));
             }
 
             for (int i = 1; i < sec - 1; ++i)
@@ -110,7 +110,7 @@ namespace Graphics
                            std::vector<Eigen::Vector3f> &uv, float bottomRadius, float upRadius, float length, float start)
     {
         const int sec = 16;
-        const float angleDelta = 2 * M_PI / sec;
+        const float angleDelta = 2 * PI_F / sec;
         float angle = 0;
         float deltaRadius = bottomRadius - upRadius;
         float slopeLen = sqrtf(deltaRadius * deltaRadius + length * length);
@@ -206,7 +206,7 @@ namespace Graphics
                 }
                 verts.push_back(Eigen::Vector3f(sinAngle * bottomRadius, start, cosAngle * bottomRadius));
                 normals.push_back(Eigen::Vector3f(0, -1, 0));
-                uv.push_back(Eigen::Vector3f(cosAngle * 0.5 + 0.5, sinAngle * 0.5 + 0.5, 0));
+                uv.push_back(Eigen::Vector3f(cosAngle * 0.5f + 0.5f, sinAngle * 0.5f + 0.5f, 0));
 
                 if (i == sec - 1)
                 {
@@ -247,7 +247,7 @@ namespace Graphics
 
                 verts.push_back(Eigen::Vector3f(sinAngle * upRadius, start + length, cosAngle * upRadius));
                 normals.push_back(Eigen::Vector3f(0, 1, 0));
-                uv.push_back(Eigen::Vector3f(cosAngle * 0.5 + 0.5, sinAngle * 0.5 + 0.5, 0));
+                uv.push_back(Eigen::Vector3f(cosAngle * 0.5f + 0.5f, sinAngle * 0.5f + 0.5f, 0));
 
                 if (i == sec - 1)
                 {
@@ -362,10 +362,10 @@ namespace Graphics
 
         int secPhi = section;
         int secTheta = secPhi * 2;
-        float deltaPhi = PI / secPhi;
-        float deltaTheta = 2 * PI / secTheta;
+        float deltaPhi = (float)PI / secPhi;
+        float deltaTheta = 2 * (float)PI / secTheta;
 
-        float phi = -PI * 0.5;
+        float phi = (float)(-PI * 0.5);
         float theta = 0;
 
         std::vector<Eigen::Vector3f> prevRow;
@@ -385,7 +385,7 @@ namespace Graphics
             theta = 0;
             float v = (float)phiIdx / secPhi;
             if (phiIdx == secPhi)
-                phi = PI * 0.5;
+                phi = (float)(PI * 0.5);
             float sinP = sinf(phi);
             float cosP = cosf(phi);
             for (int thetaIdx = 0; thetaIdx < secTheta; ++thetaIdx)

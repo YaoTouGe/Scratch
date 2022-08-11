@@ -59,7 +59,7 @@ namespace Application
     void WindowApplication::mouseMoveCallBack(GLFWwindow *window, double xpos, double ypos)
     {
         auto app = (WindowApplication *)glfwGetWindowUserPointer(window);
-        app->MouseMove(xpos, ypos);
+        app->MouseMove((int)xpos, (int)ypos);
     }
     void WindowApplication::mouseButtonCallBack(GLFWwindow *window, int button, int action, int mods)
     {
@@ -67,6 +67,6 @@ namespace Application
         glfwGetCursorPos(window, &x, &y);
 
         auto app = (WindowApplication *)glfwGetWindowUserPointer(window);
-        app->MouseButton(button, action, mods, x, y);
+        app->MouseButton(button, action, mods, (int)x, (int)y);
     }
 }

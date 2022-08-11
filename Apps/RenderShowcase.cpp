@@ -23,9 +23,9 @@ namespace Application
         auto rp = std::make_shared<RenderPipeline>();
         RenderManager::Instance()->SetCurrentPipeline(rp);
 
-        mArrowMesh = GenArrowMesh(0.02, 0.04, 1, false);
-        mCubeMesh = GenCubeMesh(Eigen::Vector3f(0.2, 0.2, 0.2));
-        mSphereMesh = GenSphereMesh(0.2, 50);
+        mArrowMesh = GenArrowMesh(0.02f, 0.04f, 1, false);
+        mCubeMesh = GenCubeMesh(Eigen::Vector3f(0.2f, 0.2f, 0.2f));
+        mSphereMesh = GenSphereMesh(0.2f, 50);
         // mSphereMesh = GenCubeMesh(Eigen::Vector3f(0.2, 0.2, 0.2));
 
         mAlbedo = RenderManager::Instance()->AllocTexture(TextureType_2D, TextureFormat_R8G8B8, true);
@@ -177,7 +177,7 @@ namespace Application
     void RenderShowcase::DrawAxis(const Eigen::Matrix4f &transform)
     {
         auto rm = RenderManager::Instance();
-        Eigen::AngleAxisf rotation(M_PI_2, Eigen::Vector3f(0, 0, -1));
+        Eigen::AngleAxisf rotation(PI_2_F, Eigen::Vector3f(0, 0, -1));
         Eigen::Affine3f local;
         local.setIdentity();
         local.linear() = rotation.toRotationMatrix();

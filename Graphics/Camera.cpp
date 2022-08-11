@@ -2,6 +2,10 @@
 #ifdef __APPLE__
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>
+#elif defined(_MSC_VER)
+#include <Windows.h>
+#include <GL/gl.h>
+#include <GL/glu.h>
 #else
 #include <GL/gl.h>
 #include <GL/glu.h>
@@ -172,19 +176,19 @@ namespace Graphics
 
 		out.setIdentity();
 		float aspect = float(w) / float(h);
-		float theta = fovy * 0.5 * DegreesToRadians;
+		float theta = fovy * 0.5f * DegreesToRadians_F;
 
-		float far = 1000;
-		float near = 0.01f;
+		float farDist = 1000;
+		float nearDist = 0.01f;
 
-		float range = far - near;
-		float invtan = 1. / tan(theta);
+		float range = farDist - nearDist;
+		float invtan = 1.f / tan(theta);
 
 		out(0, 0) = invtan / aspect;
 		out(1, 1) = invtan;
-		out(2, 2) = -(near + far) / range;
+		out(2, 2) = -(nearDist + farDist) / range;
 		out(3, 2) = -1;
-		out(2, 3) = -2 * near * far / range;
+		out(2, 3) = -2 * nearDist * farDist / range;
 		out(3, 3) = 0;
 	}
 
@@ -219,7 +223,7 @@ namespace Graphics
 		out.block<1, 3>(1, 0) = upf;
 		out.block<1, 3>(2, 0) = backward;
 
-		auto negEye = Eigen::Vector3f(-eye[0], -eye[1], -eye[2]);
+		auto negEye = Eigen::Vector3f(-(float)eye[0], -(float)eye[1], -(float)eye[2]);
 		out(0, 3) = right.dot(negEye);
 		out(1, 3) = upf.dot(negEye);
 		out(2, 3) = backward.dot(negEye);

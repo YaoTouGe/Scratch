@@ -60,7 +60,7 @@ namespace Graphics
             ro.vertexSource->Bind();
             ro.material->Use();
             ro.material->SetStates();
-            rm->BindBufferRange(perObjectUbo, PerObjectUBOBindPoint, i * RenderObject::PerObjectDataSize, RenderObject::PerObjectDataSize);
+            rm->BindBufferRange(perObjectUbo, PerObjectUBOBindPoint, (uint32_t)(i * RenderObject::PerObjectDataSize), RenderObject::PerObjectDataSize);
 
             if (ro.vertexSource->HasIndex())
                 rm->DrawElements(DrawType_Triangles, ro.vertexSource->IndexCount());

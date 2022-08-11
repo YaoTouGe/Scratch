@@ -243,6 +243,14 @@ namespace Graphics
      ***********************************************/
 
 #define PI 3.1415926535897932
+#define PI_F 3.1415926535897932f
+
+#define PI_2 1.57079632679489661923
+#define PI_2_F 1.57079632679489661923f
+
 #define DegreesToRadians PI / 180
 #define RadiansToDegrees 180 / PI
+
+#define DegreesToRadians_F PI_F / 180
+#define RadiansToDegrees_F 180 / PI_F
 }
