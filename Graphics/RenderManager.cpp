@@ -103,7 +103,11 @@ namespace Graphics
         glCheckError();
     }
 
-    typedef void (*EnableFunc)(GLenum);
+#ifdef _MSC_VER
+    typedef void (__stdcall *EnableFunc)(GLenum);
+#else
+    typedef void(*EnableFunc)(GLenum);
+#endif
     static EnableFunc enableFuncs[2] = {glDisable, glEnable};
 
     void RenderManager::SetRenderStates(const RenderStates &states)
