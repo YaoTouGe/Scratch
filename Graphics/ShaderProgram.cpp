@@ -98,7 +98,7 @@ namespace Graphics
         std::sort(mSamplerInfos.begin(), mSamplerInfos.end(), 
         [](ShaderProgramPropertyLayout::UniformInfo info1, ShaderProgramPropertyLayout::UniformInfo info2) -> int
         {
-            return info1.name.compare(info2.name);
+            return info1.name < info2.name;
         });
 
         glUseProgram(mProgramHandle);

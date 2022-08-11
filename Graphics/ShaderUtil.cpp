@@ -2,6 +2,7 @@
 #include <fstream>
 #include <string>
 #include <unordered_set>
+#include <limits>
 #include "ShaderUtil.h"
 #include "RenderManager.h"
 #include "Constants.h"
@@ -24,11 +25,10 @@ namespace Graphics
 
         if (writeBuffer == nullptr)
         {
-            auto startPos = ifs.tellg();
-            ifs.seekg(0, ios::end);
-            auto endPos = ifs.tellg();
+            ifs.ignore(std::numeric_limits<std::streamsize>::max());
+            std::streamsize length = ifs.gcount();
             ifs.close();
-            return endPos - startPos;
+            return (size_t)length;
         }
         
         ifs.read(writeBuffer, bufferSize);

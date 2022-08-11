@@ -81,7 +81,7 @@ Share
         bits = ((bits & 0x00FF00FFu) << 8u) | ((bits & 0xFF00FF00u) >> 8u);
         return float(bits) * 2.3283064365386963e-10; // / 0x100000000
     }
-    // 低差序列生成
+    // Low Discrepancy Sequnce
     vec2 Hammersley(uint i, uint N)
     {
         return vec2(float(i)/float(N), RadicalInverse_VdC(i));
