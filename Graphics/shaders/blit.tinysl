@@ -1,0 +1,25 @@
+#include "common.tinysl"
+
+States
+{
+    ZTest off
+}
+
+Share
+{
+    struct AppData
+    {
+        vec2 uv0;
+    }
+}
+
+Vertex
+{
+    out AppData data;
+    const vec4 quadVerts[4];
+    void main()
+    {
+
+        gl_Position = viewProjectionMatrix * worldPos;
+    }
+}

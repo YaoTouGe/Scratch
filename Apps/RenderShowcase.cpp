@@ -95,6 +95,8 @@ namespace Application
             TextureFormat_R8G8B8,
             TextureFormat_R8G8B8};
         mMaterialBlackWhite->LoadTextures(blackWhiteTexs, blackWhiteFormats);
+
+        mRT = RenderManager::Instance()->AllocRenderTexture(TextureFormat_R8G8B8A8, 1, true, m_width, m_height);
         return 0;
     }
 

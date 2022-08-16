@@ -6,6 +6,7 @@
 #include "ShaderProgram.h"
 #include "Material.h"
 #include "Camera.h"
+#include "RenderTexture.h"
 
 namespace Application
 {
@@ -49,6 +50,8 @@ namespace Application
         float mMetallicScale = 1;
         float mAOScale = 1;
         float mRoughnessScale = 1;
+
+        Graphics::RenderTexture::SP mRT;
     };
 }
 
