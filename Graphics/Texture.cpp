@@ -31,18 +31,21 @@ namespace Graphics
     {
         uint32_t nativeType;
         uint32_t nativeFormat;
-
         int formatChannel;
         GetNativeTypeAndFormat(mFormat, &nativeType, &nativeFormat, &formatChannel);
-        if (formatChannel != nchannel)
-        {
-            GFX_LOG_ERROR("texture data channel not match!");
-            return false;
-        }
 
-        auto dataSize = nchannel *width *height;
-        mData = malloc(dataSize);
-        memcpy(mData, data, dataSize);
+        if (data != nullptr)
+        {
+            if (formatChannel != nchannel)
+            {
+                GFX_LOG_ERROR("texture data channel not match!");
+                return false;
+            }
+
+            auto dataSize = nchannel * width * height;
+            mData = malloc(dataSize);
+            memcpy(mData, data, dataSize);
+        }
 
         glBindTexture(GL_TEXTURE_2D, mHandle);
         glTexImage2D(GL_TEXTURE_2D, 0, nativeFormat, width, height, 0, nativeFormat, nativeType, data);
@@ -79,11 +82,10 @@ namespace Graphics
             mWhiteTexture->SetFilter(TextureFilter_Linear, TextureFilter_Linear);
             mWhiteTexture->SetWrapMode(TextureWrapMode_Repeat, TextureWrapMode_Repeat);
             uint8_t pixels[16] = {
-                255,255,255,255,
-                255,255,255,255,
-                255,255,255,255,
-                255,255,255,255
-            };
+                255, 255, 255, 255,
+                255, 255, 255, 255,
+                255, 255, 255, 255,
+                255, 255, 255, 255};
             mWhiteTexture->TexData(2, 2, 4, pixels, 0);
         }
 
@@ -98,10 +100,23 @@ namespace Graphics
             mBlackTexture->SetFilter(TextureFilter_Linear, TextureFilter_Linear);
             mBlackTexture->SetWrapMode(TextureWrapMode_Repeat, TextureWrapMode_Repeat);
             uint8_t pixels[16] = {
-                0,0,0,255,
-                0,0,0,255,
-                0,0,0,255,
-                0,0,0,255,};
+                0,
+                0,
+                0,
+                255,
+                0,
+                0,
+                0,
+                255,
+                0,
+                0,
+                0,
+                255,
+                0,
+                0,
+                0,
+                255,
+            };
             mBlackTexture->TexData(2, 2, 4, pixels, 0);
         }
 
@@ -116,10 +131,23 @@ namespace Graphics
             mMagentaTexture->SetFilter(TextureFilter_Linear, TextureFilter_Linear);
             mMagentaTexture->SetWrapMode(TextureWrapMode_Repeat, TextureWrapMode_Repeat);
             uint8_t pixels[16] = {
-                255,0,255,255,
-                255,0,255,255,
-                255,0,255,255,
-                255,0,255,255,};
+                255,
+                0,
+                255,
+                255,
+                255,
+                0,
+                255,
+                255,
+                255,
+                0,
+                255,
+                255,
+                255,
+                0,
+                255,
+                255,
+            };
             mMagentaTexture->TexData(2, 2, 4, pixels, 0);
         }
 

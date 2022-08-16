@@ -18,19 +18,18 @@ namespace Graphics
     {
     public:
         typedef std::shared_ptr<RenderTexture>  SP;
-        RenderTexture(TextureFormat format);
-        void SetUseDepthBuffer(bool useTexture, TextureFormat format);
-        void SetUseStencilBuffer();
+        RenderTexture(int fboHandle, TextureFormat colorFormat, int colorBufferCount, bool useDepthStencil, int width, int height);
+        ~RenderTexture();
 
         // index is a MRT index
         Texture::SP GetColorTexture(int index);
-        void SetColorTextureCount(int count);
-
-        void GetDepthTexture();
         void MakeCurrent();
 
     private:
         Texture::SP mColorTextures[8];
         int mColorTexCount;
+        int mFBOHandle;
+        int mDepthStencilHandle;
+        bool mUseDepthStencil;
     };
 }
