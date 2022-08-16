@@ -26,15 +26,19 @@ namespace Graphics
         static RenderManager *Instance();
 
         /****************** graphics resources ***********************/
-
         Buffer::SP AllocBuffer(BufferType type);
         Texture::SP AllocTexture(TextureType type, TextureFormat format, bool generateMipmap);
-        RenderTexture::SP AllocRenderTexture(TextureFormat format);
+        RenderTexture::SP AllocRenderTexture(TextureFormat format, int rtCount, bool useDepthStencil, int width, int height);
         ShaderProgram::SP AllocShaderProgram();
 
+        /*
+            Do not release resources manually, it's automatically released when
+            reference counter becomes zero.
+        */
         void ReleaseBuffer(Buffer *buffer);
         void ReleaseTexture(Texture *tex);
         void ReleaseShaderProgram(ShaderProgram *shaderProgram);
+        void ReleaseRenderTexture(RenderTexture* rt);
 
         void SetCurrentRenderTexture(RenderTexture::SP rt) {}
         RenderTexture::SP GetCurrentRenderTexture() { return mRenderTexture; }

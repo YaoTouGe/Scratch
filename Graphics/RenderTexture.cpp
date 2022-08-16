@@ -1,5 +1,6 @@
 #include "RenderTexture.h"
 #include "RenderManager.h"
+#include "GL/glew.h"
 
 namespace Graphics
 {
@@ -7,7 +8,7 @@ namespace Graphics
     {
         auto rm = RenderManager::Instance();
         mColorTexCount = colorBufferCount;
-        mUseRenderBuffer = useDepthStencil;
+        mUseDepthStencil = useDepthStencil;
 
         if (colorBufferCount > 8)
         {
@@ -18,7 +19,7 @@ namespace Graphics
         for (int i = 0; i < colorBufferCount; ++i)
         {
             mColorTextures[i] = rm->AllocTexture(TextureType_2D, format, false);
-            mColorTextures[i]->TexData(width, height, 0, null, 0);
+            mColorTextures[i]->TexData(width, height, 0, nullptr, 0);
         }
 
         mFBOHandle = fboHandle;
@@ -27,30 +28,43 @@ namespace Graphics
 
         for (int i = 0; i < colorBufferCount; ++i)
         {
-            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, mColorTextures[i]->GetHandle());
+            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, mColorTextures[i]->GetHandle(), 0);
         }
 
         if (useDepthStencil)
         {
-            glGenRenderbuffers(1, &mDepthStencilHandle);
+            glGenRenderbuffers(1, (GLuint*)&mDepthStencilHandle);
             glBindRenderbuffer(GL_RENDERBUFFER, mDepthStencilHandle);
             glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
             glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, mDepthStencilHandle);
         }
+
+        if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+            GFX_LOG_ERROR("ERROR::FRAMEBUFFER:: Framebuffer is not complete!");
     }
 
-    Texture::SP GetColorTexture(int index)
+    Texture::SP RenderTexture::GetColorTexture(int index)
     {
         if (index >= mColorTexCount)
         {
-            GFX_LOG_ERROR_FMT("Index %d more than actual %d", index, colorBufferCount);
+            GFX_LOG_ERROR_FMT("Index %d more than actual %d", index, mColorTexCount);
             return nullptr;
         }
         return mColorTextures[index];
     }
 
-    Texture::~Texture()
+    RenderTexture::~RenderTexture()
     {
-        glDeleteFramebuffers(1, &mFBOHandle);
+        RenderManager::Instance()->ReleaseRenderTexture(this);
+    }
+
+    void RenderTexture::MakeCurrent()
+    {
+        glBindFramebuffer(GL_FRAMEBUFFER, mFBOHandle);
+    }
+
+    void RenderTexture::ResetDefaultRT()
+    {
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
 }

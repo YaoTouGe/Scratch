@@ -37,6 +37,14 @@ namespace Graphics
         return std::make_shared<ShaderProgram>(programHandle);
     }
 
+    RenderTexture::SP AllocRenderTexture(TextureFormat format, int rtCount, bool useDepthStencil, int width, int height)
+    {
+        GLuint fboHandle;
+        glGenFramebuffers(1, &fboHandle);
+
+        return std::make_shared<RenderTexture>(fboHandle, format, rtCount, useDepthStencil, width, height);
+    }
+
     void RenderManager::ReleaseTexture(Texture *tex)
     {
         if (tex == nullptr)
@@ -62,6 +70,15 @@ namespace Graphics
             return;
         glDeleteProgram(shaderProgram->GetProgramHandle());
         shaderProgram->Reset();
+    }
+
+    void RenderManager::ReleaseRenderTexture(RenderTexture *rt)
+    {
+        if (rt == nullptr)
+            return;
+
+        GLuint handle = (GLuint)rt->GetHandle();
+        glDeleteFramebuffers(1, &handle);
     }
 
     void RenderManager::BindBufferRange(Buffer::SP buffer, uint32_t bindPoint, uint32_t offset, uint32_t size)

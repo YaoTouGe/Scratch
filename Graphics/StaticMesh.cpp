@@ -39,7 +39,7 @@ namespace Graphics
             if (mLayoutFlag & flag)
             {
                 auto writePtr = (float *)writeStart;
-                for (int j = 0; j < attribs[i]->size(); ++j)
+                for (size_t j = 0; j < attribs[i]->size(); ++j)
                 {
                     *writePtr = attribs[i]->at(j)[0];
                     *(writePtr + 1) = attribs[i]->at(j)[1];
@@ -88,7 +88,7 @@ namespace Graphics
         // triangles must not share vertex, and should contain nromal and uv attribs
         if ((mLayoutFlag & LayoutName_Normal) && (mLayoutFlag & LayoutName_UV0))
         {
-            for (int idx = 0; idx < mVertexCount; idx += 3)
+            for (size_t idx = 0; idx < mVertexCount; idx += 3)
             {
                 auto &a = mPositions[idx];
                 auto &b = mPositions[idx + 1];

@@ -24,7 +24,9 @@ namespace Graphics
         // index is a MRT index
         Texture::SP GetColorTexture(int index);
         void MakeCurrent();
+        int GetHandle() { return mFBOHandle; }
 
+        static void ResetDefaultRT();
     private:
         Texture::SP mColorTextures[8];
         int mColorTexCount;

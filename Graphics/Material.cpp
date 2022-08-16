@@ -89,7 +89,7 @@ namespace Graphics
         RenderManager::Instance()->BindBufferBase(mMaterialUniformBuffer, PerMaterialUBOBindPoint);
 
         auto samplerInfos = mShader->GetSamplerInfos();
-        for (int texUnit = 0; texUnit < samplerInfos.size(); ++texUnit)
+        for (size_t texUnit = 0; texUnit < samplerInfos.size(); ++texUnit)
         {
             auto iter = mTextureBinds.find(samplerInfos[texUnit].name);
             if (iter != mTextureBinds.end())

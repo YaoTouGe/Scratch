@@ -102,7 +102,7 @@ namespace Graphics
         });
 
         glUseProgram(mProgramHandle);
-        for(int i = 0; i < mSamplerInfos.size(); ++i)
+        for(size_t i = 0; i < mSamplerInfos.size(); ++i)
         {
             glUniform1i(mSamplerInfos[i].location, i);
         }

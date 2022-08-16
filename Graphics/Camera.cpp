@@ -176,7 +176,7 @@ namespace Graphics
 
 		out.setIdentity();
 		float aspect = float(w) / float(h);
-		float theta = fovy * 0.5f * DegreesToRadians_F;
+		float theta = (float)fovy * 0.5f * DegreesToRadians_F;
 
 		float farDist = 1000;
 		float nearDist = 0.01f;
