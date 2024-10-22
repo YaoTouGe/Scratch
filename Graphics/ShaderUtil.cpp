@@ -11,7 +11,7 @@ using namespace std;
 
 namespace Graphics
 {
-    static std::string versionString = "#version 460 core";
+    static std::string versionString = "#version 410 core";
 
     size_t ReadFileContent(const std::string &file, char *writeBuffer, size_t bufferSize)
     {

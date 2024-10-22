@@ -33,6 +33,15 @@ namespace Graphics
             if (mStageFlag & flag)
             {
                 glCompileShader(mStageHandles.handles[i]);
+                GLint success;
+                glGetShaderiv(mStageHandles.handles[i], GL_COMPILE_STATUS, &success);
+                if (!success)
+                {
+                    char infoLog[512];
+                    glGetShaderInfoLog(mStageHandles.handles[i], 512, NULL, infoLog);
+                    GFX_LOG_ERROR(infoLog);
+                    return false;
+                }
                 glAttachShader(mProgramHandle, mStageHandles.handles[i]);
             }
         }
